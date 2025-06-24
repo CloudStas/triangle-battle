@@ -1,29 +1,36 @@
 # Triangle Battle
 
-Triangle Battle is a multiplayer where there is triangles that shoot each other a demo of a multiplayer game, feel free to modify this software however you like.
+Triangle Battle is a multiplayer game where triangles shoot each other—a demo of a simple multiplayer game.  
+Feel free to modify this software however you like.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/download) (vXX or higher)
+- [Node.js](https://nodejs.org/en/download) (v14 or higher recommended)
 
 ## Setup and Run
 
-1. **Download and extract** the ZIP file for the project.
-2. **Open your terminal (cmd/PowerShell on Windows, Terminal on Mac/Linux).**
-3. **Check if Node.js is installed**:
+1. **Download and extract** the ZIP file for the project (or clone the repository).
+2. **Open your terminal** (Command Prompt or PowerShell on Windows, Terminal on Mac/Linux).
+3. **Check if Node.js is installed:**
+    ```bash
     node -v
+    ```
     If you don’t see a version number, [download and install Node.js](https://nodejs.org/en/download).
 4. **Navigate to the project folder** (the extracted one):
+    ```bash
     cd /path/to/your/folder
-
-5. *Update dependencies*
-	npm install express
-	npm install socket.io
     ```
-5. **Start the server**:
+5. **Install dependencies:**
+    ```bash
+    npm install socket.io
+	npm install express
+    ```
+6. **Start the server:**
+    ```bash
     node server.js
     ```
-6. The server should now be running. Now Open http://localhost:3000 in your browser.
+7. The server should now be running.  
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Contributing
 
