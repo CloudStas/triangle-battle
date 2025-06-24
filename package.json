@@ -1,0 +1,9 @@
+{
+  "name": "Triangles Game IDK I Guess",
+  "version": "0.0.1",
+  "description": "Triangles Game IDK I Guess",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

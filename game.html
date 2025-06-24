@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cool Triangles</title>
+  <style>
+    body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    #StartScreen {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #f0f0f0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #StartScreenLayout {
+      width: 80%;
+      height: 80%;
+      background-color: rgba(0, 241, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #ErrorMessage {
+      color: red;
+      visibility: hidden;
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    #DisplayNameText {
+      font-size: 1.5em;
+    }
+    #DisplayNameInput {
+      margin-top: 20px;
+      padding: 8px;
+      font-size: 14px;
+      border: 2px solid #cdcdcd;
+      background-color: AliceBlue;
+      border-radius: 5px;
+      width: 60%;
+    }
+    #JoinButton {
+      margin-top: 20px;
+      background-color: rgba(75, 255, 0, 0.8);
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid black;
+      z-index: 10;
+    }
+      
+    #PosText, #Healthbox, #Healthbar, #Health, #HealthText, #plustext {
+      position: absolute;
+      transform-origin: top left;
+    }
+    #PosText {
+	  position: absolute;
+      visibility: visible;
+	  display: block;
+      z-index: 16;
+      color: white;
+      top: 5%;
+      left: 2%;
+      font-size: clamp(5px, 1.2vw, 50px);
+      user-select: none;
+	  
+    }
+    #Healthbox {
+      visibility: hidden;
+      z-index: 16;
+      left: 2%;
+      bottom: 2%;
+      width: 35%;
+      height: 12.5%;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 5px;
+      border: 2px solid white;
+    }
+    #plustext {
+      visibility: visible;
+      z-index: 17;
+      color: white;
+      user-select: none;
+      position: absolute;
+      top: 70%;
+      right: 92.5%;
+      transform: translateY(-50%);
+    }
+    #Healthbar {
+	  position: absolute;
+      visibility: visible;
+      z-index: 18;
+      background-color: rgba(207, 207, 207, 1);
+      top: 20%;
+      right: 12.5%;
+      width: 75%;
+      height: 50%;
+    }
+    #Health {
+      visibility: visible;
+      z-index: 19;
+      background-color: #00FF00;
+      width: 100%;
+      height: 100%;
+    }
+      #DashPowerbar {
+      visibility: visible;
+      z-index: 20;
+      background-color: rgba(255, 255, 255, 0.8);
+      top: 1%;
+      right: 12.5%;
+      width: 75%;
+      height: 10%;
+    }
+    #Dashpower {
+		position: relative;
+      visibility: visible;
+      z-index: 21;
+      background-color: #ffa500;
+      width: 100%;
+      height: 100%;
+	  top: 50%;
+	  left: 50%;
+    }
+	#DashPowerText {
+       visibility: visible;
+      z-index: 21;
+      color: white;
+      font-size: clamp(2px, 2vw, 100px);
+      user-select: none;
+      position: absolute;
+      top: 30%;
+      right: 2.5%;
+      transform: translateY(-50%);
+    }
+	
+    #HealthText {
+      visibility: visible;
+      z-index: 20;
+      color: white;
+      font-size: clamp(2px, 2vw, 100px);
+      user-select: none;
+      position: absolute;
+      top: 70%;
+      right: 2.5%;
+      transform: translateY(-50%);
+    }
+     
+     #Leaderboard {
+		position: absolute;
+		top: 5%;
+		right: 2.5%;
+		width: 15%;
+		height: 30%;
+		background-color: white;
+		z-index: 20;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 10px;
+	}
+
+
+	#LeaderboardBox {
+		position: absolute;
+		width: 15%;
+		height: 30%;
+		top: 5%;
+		right: 2.5%;
+		background-color: rgba(237, 231, 225, 0.8);
+		border-radius: 5px;
+		overflow: auto;
+		z-index: 22;
+	}
+
+	.leaderboard-entry {
+		position: relative;
+		z-index: 23;
+		align-items: center;
+		padding: 6px 0;
+		border-bottom: 1px solid #999;
+		font-weight: bold;
+	}
+
+	.leaderboard-entry:last-child {
+		border-bottom: none;
+	}
+
+	.rank-box {
+		position: relative;
+		background: linear-gradient(to bottom, #FFD700, #FFC107);
+		color: #333;
+		font-size: 0.9em;
+		font-weight: bold;
+		width: 28px;
+		height: 28px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 6px;
+		margin-right: 10px;
+		z-index: 24;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+	}
+
+	.player-name {
+		position: relative;
+		z-index: 25;
+		flex-grow: 1;
+		color: black;
+		text-align: left; 
+	}
+	#Chat {
+		visibility: visible;
+		position: absolute;
+		z-index: 20;
+		background-color: rgba(237, 231, 225, 0.8);
+		top: 55%;
+		right: 2%;
+		width: 17.5%;
+		height: 42.5%;
+		border-radius: 5px;
+	}
+	
+	#ChatText {
+		visibility: visible;
+		position: absolute;
+		z-index: 21;
+		color: black;
+		top: 5%;
+		right: 45%;
+		font-size: clamp(20px, 1.5vw, 75px);
+	}
+	#ChatBox {
+		visibility: visible;
+		position: absolute;
+		z-index: 23;
+		background-color: gray;
+		top: 20%;
+		right: 10%;
+		width: 80%;
+		height: 55%;
+		border-radius: 5px;
+		overflow: auto;
+	}
+	
+	#ChatBoxForPrivate {
+		visibility: visible;
+		position: absolute;
+		z-index: 22;
+		background-color: gray;
+		top: 20%;
+		right: 10%;
+		width: 80%;
+		height: 55%;
+		border-radius: 5px;
+		overflow: auto;
+	}
+	#ChatTextBox {
+		visibility: visible;
+		position: absolute;
+		z-index: 23;
+		top: 80%;
+		right: 25%;
+		width: 65%;
+		height: 15%;
+	}
+	
+	.player-message {
+		display: flex;
+		flex-direction: column; /* Stacks messages vertically */
+		align-items: flex-start; /* Aligns to the left */
+		color: white; /* Text color */
+		padding: 8px;
+		margin: 5px 0; /* Adds spacing between messages */
+		border-radius: 5px; /* Optional: Rounded corners */
+		max-width: 60%; /* Prevents the text box from spanning too wide */
+		z-index: 23;
+	}
+
+	
+	.round-button i {
+        color: white;
+        font-size: clamp(5px, 1.2vw, 50px);
+		z-index: 25;
+    }
+	
+	#SendButton {
+		visibility: visible;
+		position: absolute;
+		z-index: 24;
+		top: 80%;
+		right: 2.5%;
+		background-color: rgb(60, 179, 113);
+        border: none;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+		width: 20%;
+		height: 15%;
+	}
+	
+	#ChatSelect {
+		visibility: visible;
+		position: absolute;
+		z-index: 24;
+		top: 5%;
+		right: 5%;
+	}
+	
+	#RedVsBlueBarKills {
+		visibility: visible;
+		position: absolute;
+		z-index: 25;
+		top: 80%;
+		left: 45%;
+		width: 20%;
+		height: 10%;
+		background-color: rgba(255, 255, 255, 0.5);
+		border-radius: 25px;
+	}
+	
+	#RedKills {
+		visibility: visible;
+		position: absolute;
+		width: 50%;
+		height: 100%;
+		background-color: rgba(245, 0, 0, 0.8);
+		position: absolute;
+		top: 0%;
+		left: 0%;
+		border-radius: 25px 0 0 25px; /* Rounded left side */
+	}
+
+	#BlueKills {
+		visibility: visible;
+		position: absolute;
+		width: 50%;
+		height: 100%;
+		background-color: rgba(0, 0, 245, 0.8); /* Blue */
+		position: absolute;
+		top: 0%;
+		left: 50%;
+		border-radius: 0 25px 25px 0; /* Rounded right side */
+	}
+	
+	#RedText {
+		z-index: 27;
+		position: absolute;
+		background-color: transparent; 
+		top: 90%;
+		left: 45%;
+		height: 10%;
+		width: 10%;
+		text-align: center;
+		font-size: clamp(5px, 1.2vw, 50px);
+	}
+	#NumberForRedText {
+		position: absolute;
+		top: calc(87.5% + 5%);
+		left: 47.5%; 
+		z-index: 28;
+		color: white;
+		font-size: clamp(5px, 1.2vw, 50px);
+	}
+	#BlueText {
+		z-index: 27;
+		position: absolute;
+		background-color: transparent; 
+		top: 90%;
+		left: 53.5%;
+		height: 10%;
+		width: 10%;
+		text-align: center;
+		font-size: clamp(5px, 1.2vw, 50px);
+	}
+	#NumberForBlueText {
+		position: absolute;
+		top: calc(87.5% + 5%);
+		left: 56%; 
+		z-index: 28;
+		color: white;
+		font-size: clamp(5px, 1.2vw, 50px);
+	}
+  </style>
+  
+  
+</head>
+<body>
+<div id="DeathScreen" style="display: none; position: absolute; z-index: 50; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); color: white; flex-direction: column; align-items: center; justify-content: center;">
+  <h1 style="font-size: 5vw; margin: 0;">You Died</h1>
+  <h3 id="DeathCauseText" style="font-size: 2vw; margin-top: 1vh;">Eliminated by ???</h3>
+  <button id="RestartButton" style="display: flex; position: absolute; z-index: 55; width: 20%; height: 10%; top: 60%; right: 40%; background-color: rgba(255, 0, 0, 0.8); color: white; flex-direction: column; align-items: center; justify-content: center;">
+  Restart
+</button>
+
+</div>
+      <div id="DeathScreen" style="display: none; position: absolute; z-index: 50; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); color: white; flex-direction: column; align-items: center; justify-content: center;">
+            <h1 style="font-size: 5vw; margin: 0;">You Died</h1>
+            <h3 id="DeathCauseText" style="font-size: 2vw; margin-top: 1vh;">Eliminated by ???</h3>
+            <button id="RestartButton" style="display: flex; position: absolute; z-index: 55; width: 20%; height: 10%; top: 60%; right: 40%; background-color: rgba(255, 0, 0, 0.8); color: white; flex-direction: column; align-items: center; justify-content: center;">
+            Restart
+            </button>
+
+      </div>
+  <div id="StartScreen">
+    <div id="StartScreenLayout">
+      <h1>Cool Triangles Game IDK</h1>
+      <h4 id="DisplayNameText">Display Name:</h4>
+      <input type="text" placeholder="Display Name Here" id="DisplayNameInput" />
+      <button id="JoinButton">Join</button>
+      <h5 id="ErrorMessage">
+        No spaces allowed, and the name must be less than 10 characters long
+      </h5>
+    </div>
+  </div>
+	 
+  <!-- Game Elements -->
+  <canvas id="GameContainer" style="z-index: 10;"></canvas>
+  <div class="square" id="Healthbox">
+	<div id="plustext">+</div>
+	<svg xmlns="http://www.w3.org/2000/svg" 
+                  style="position: absolute; top: 5%; right: 80%;"
+                  width="25%" height="35%" viewBox="0 0 16 16">
+                  <!-- Fill Layer -->
+                  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1z"
+                  fill="yellow"/>
+                  <!-- Stroke Layer -->
+                  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1z"
+                  fill="none" stroke="black" stroke-width="0.5"/>
+     	 </svg>
+     	 <div id="Healthbar">
+           	 <div id="Health"></div>
+      	</div>
+      	<div id="DashPowerbar">
+      	      <div id="Dashpower"></div>
+      	</div>
+			<div id="DashPowerText">100</div>
+            <div id="HealthText">100</div>
+      </div>
+
+		<div id="PosText">Pos: (X: 0 Y: 0)</div>
+     	 <div class="square" id="Leaderboard">
+           	 <div class="square" id="LeaderboardBox"> 
+            	</div>
+      	</div>
+		<div class="square" id="Chat">
+			<div id="ChatText">Global Chat</div>
+			<button id="ChatSelect" class="btn btn-light">
+				<i class="bi bi-chat-left-dots-fill"></i>
+			</button>
+
+			<div id="ChatBox" class="square"></div>
+			<div id="ChatBoxForPrivate" class="square"></div>
+			<input type="text" id="ChatTextBox" placeholder="Type your message here">
+			<button class="round-button" id="SendButton">
+				<i class="bi bi-send"></i>
+			</button>
+      	</div>
+
+		<div id="RedVsBlueBarKills" class="square">
+			<div id="RedKills" class="square"></div>
+			<div id="BlueKills" class="square"></div>
+		</div>
+		<div id="RedText"><span style="color: red;">Red</span> <span style="color: white;">Team</span></div>
+		<div id="NumberForRedText">50 kills</div> 
+		<div id="BlueText"><span style="color: blue;">Blue</span> <span style="color: white;">Team</span></div>
+		<div id="NumberForBlueText">50 kills</div> 
+
+
+      
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+  var socket = io();
+  const leaderboardBox = document.getElementById("LeaderboardBox");
+  let player, scene, camera, renderer;
+  const currentKeys = {
+      w: false,
+      a: false,
+      s: false,
+      d: false
+  };
+
+  let bullets = [];
+  let enemies = []; 
+  
+  let health = 100;
+  let dashpower = 100;
+  let bulletSpeed = 0.25;
+  let isDashing = false;
+  let dashStartTime = 0;
+  let dashDuration = 500;
+  let dashDistance = 50000;
+  let dashCooldown = 2000;
+  let lastDashTime = -dashCooldown;
+  let dashDirection = new THREE.Vector3();
+  let dashClones = [];
+  let gradientTiles = [];
+  const tileSize = 50;
+  const tilesPerRow = 5;
+  let dashRegenRate = 0.1;
+  let isDead = false;
+  let isHoldingW = false;
+  let isHoldingS = false;
+  let lastSentAngle = null;
+  let ismoving = false;
+  let lastSentRotation = null;
+  let mouseX = 0, mouseY = 0;
+  const maxBulletDistance = 100;
+  const minBulletSpeed = 0.01;
+  let wasMoving = false;
+
+	let whatchat = 1;
+  
+  let whatteam = "null";
+  
+  let playerx = 0;
+  let playery = 0;
+  
+  let gameStarted = false;
+
+  
+  let Playername = '';
+  
+  let isTyping = false;
+
+  let playerVelocity = new THREE.Vector3();
+  const moveAcceleration = 30.0; 
+  const friction = 0.9; 
+  
+  const startScreen = document.getElementById("StartScreen");
+  const errorMessage = document.getElementById("ErrorMessage");
+  const gameContainer = document.getElementById("GameContainer");
+  const joinButton = document.getElementById("JoinButton");
+  const displayNameInput = document.getElementById("DisplayNameInput");
+  const chatTextBox = document.getElementById("ChatTextBox");
+  const SendButton = document.getElementById("SendButton");
+  const ChatSelect = document.getElementById("ChatSelect");
+  const ChatText = document.getElementById("ChatText");
+   const ChatBox = document.getElementById("ChatBox");
+   const ChatBoxForPrivate = document.getElementById("ChatBoxForPrivate");
+      document.getElementById("RestartButton").addEventListener("click", () => location.reload());
+
+	const ListSwear = ["arse", "arsehead", "arsehead", "arsehole", "ass", "asshole", "bastard", "bitch", "bloody", "bollocks", "brotherfucker", "bugger", "bullshit", "christonabike", "christ", "christonacracker", "cock", "crap", "cunt", "dick", "dyke", "fag", "faggot", "fuck", "hell", "shit", "jesuschrist", "kike", "tranny", "twat", "wanker"];
+
+	displayNameInput.addEventListener("keydown", function(event) {
+		if (event.key === "Enter") handleJoin();
+	});
+
+	joinButton.onclick = handleJoin;
+	
+	chatTextBox.addEventListener("focus", () => {
+		isTyping = true;
+	});
+
+	chatTextBox.addEventListener("blur", () => {
+		isTyping = false;
+	});
+	
+	function handleJoin() {
+		let inputValue = displayNameInput.value.trim().toLowerCase();
+		if (ListSwear.some(word => inputValue.includes(word))) { 
+			errorMessage.style.visibility = "visible";
+			errorMessage.innerHTML = "You really think you can name yourself a swear word, think again.";
+			setTimeout(() => errorMessage.style.visibility = "hidden", 2000);
+			return;
+		}
+
+		if (inputValue.length > 0 && inputValue.length < 11 && !/\s/.test(inputValue)) {
+			Playername = inputValue;
+			startScreen.style.display = "none";
+			errorMessage.style.visibility = "hidden";
+
+			// Assign `whatTeam` randomly to "blue" or "red"
+			let whatTeam = Math.random() < 0.5 ? "blue" : "red";
+			whatteam = whatTeam;
+			console.log(whatteam);
+			
+
+			startGame();
+		} else {
+			errorMessage.style.visibility = "visible";
+			errorMessage.innerHTML = "No spaces allowed, and the name must be less than 10 characters long.";
+			setTimeout(() => errorMessage.style.visibility = "hidden", 2000);
+		}
+	}
+
+	joinButton.addEventListener("click", (e) => {
+		e.stopPropagation();
+		handleJoin();
+	});
+      
+      window.addEventListener("beforeunload", () => {
+		  chatTextBox.value = "";
+            socket.emit("PlayerDis", Playername);
+      });
+	
+	ChatSelect.addEventListener("click", (e) => {
+		e.stopPropagation();
+		whatchat += 1;
+		console.log(whatchat);
+		if (whatchat > 2) {
+			whatchat = 1;
+			console.log(whatchat);
+			ChatText.innerHTML = "Global Chat";
+			ChatBox.style.visibility = "visible";
+			ChatBoxForPrivate.visibility = "hidden";
+			// here
+		} else if (whatchat === 1) {
+			console.log(whatchat);
+			ChatText.innerHTML = "Global Chat";
+			ChatBox.style.visibility = "visible";
+			ChatBoxForPrivate.visibility = "hidden";
+		} else if (whatchat === 2) {
+			console.log(whatchat);
+			ChatText.innerHTML = "Team Chat";
+			ChatBox.style.visibility = "hidden";
+			ChatBoxForPrivate.visibility = "visible";
+		}
+	});
+	
+      document.getElementById("RestartButton").addEventListener("click", () => location.reload());
+      
+      // enemy creation and remove logic
+      
+      
+      
+      
+      socket.on("ExistingEnemies", (players) => {
+		players.forEach((p) => {
+			if (!enemies[p.name]) {
+				const enemy = createNewEnemy(p.name, p.whatteam); // Pass whatteam
+				scene.add(enemy);
+
+			const posX = p.position?.x || 0;
+			const posY = p.position?.y || 0;
+			enemy.position.set(posX, posY, 0);
+
+			enemy.userData = {
+				targetPosition: new THREE.Vector3(posX, posY, 0),
+				velocity: new THREE.Vector3(0, 0, 0)
+			};
+
+			const baseWidth = 1920, baseHeight = 1080;
+			const sX = Math.max(0.1, window.innerWidth / baseWidth);
+			const sY = Math.max(0.1, window.innerHeight / baseHeight);
+			enemy.scale.set(sX, sY, 1);
+
+			enemies[p.name] = enemy;
+			}
+		});
+	});
+
+      socket.on("enemyPositionUpdate", (data) => {
+      if (data.name === Playername) return;
+            if (enemies[data.name]) {
+                  if (enemies[data.name]) {
+                        const enemy = enemies[data.name];
+                        enemy.userData.targetPosition.set(data.position.x, data.position.y, 0);
+                        if (data.rotation !== undefined) {
+                              enemy.rotation.z = data.rotation;
+                        }
+                  }
+            }
+      });
+      socket.on("enemyShoot", (data) => {
+            const bullet = {
+                  mesh: createBulletMesh(),
+                  direction: new THREE.Vector3(data.direction.x, data.direction.y, data.direction.z || 0),
+                  distanceTraveled: 0,
+                  owner: data.owner,
+                  id: data.id
+            };
+
+            bullet.mesh.position.copy(data.position);
+            bullet.mesh.rotation.z = Math.atan2(data.direction.y, data.direction.x);
+
+            scene.add(bullet.mesh);
+            bullets.push(bullet);
+      });
+	
+	let killerName = null;
+
+	socket.on("applyDamage", ({ amount, killer }) => {
+		health = Math.max(0, health - amount);
+		if (health <= 0 && !isDead) {
+			isDead = true;
+        
+		
+			if (!killerName) {
+				killerName = killer;
+			}
+
+			const deathScreen = document.getElementById("DeathScreen");
+			deathScreen.style.display = "flex";
+			document.getElementById("DeathCauseText").textContent = `Eliminated by ${killerName}`;
+			document.getElementById("RestartButton").style.display = "flex";
+		}	
+	});
+
+
+
+
+
+
+      function createNewEnemy(name, whatteam) {
+		const geometry = new THREE.BufferGeometry();
+		const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
+		let material; 
+		geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+
+		
+		if (whatteam === "red") { 
+			material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide }); // Red color
+		} else if (whatteam === "blue") {
+			material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide }); // Blue color
+		}
+
+
+		const enemymesh = new THREE.Mesh(geometry, material);
+		enemymesh.name = name;
+
+		// Calculate scale based on window size
+		const baseWidth = 1920, baseHeight = 1080;
+		const sX = Math.max(0.1, window.innerWidth / baseWidth);
+		const sY = Math.max(0.1, window.innerHeight / baseHeight);
+		enemymesh.scale.set(sX, sY, 1);
+
+		return enemymesh;
+	}
+
+      // enemy remove logic
+      socket.on("RemoveEnemy", (name) => {
+            if (enemies[name]) {
+                  scene.remove(enemies[name]);
+                  delete enemies[name];
+
+            }
+      });
+      let lastSentPos = { x: 0, y: 0 };
+      let lastPositionUpdate = 0;
+      const positionUpdateInterval = 100;
+
+      function emitPositionIfChanged() {
+            if (!player || isDead || !isPlayerMoving()) return;
+
+            const now = Date.now();
+            if (now - lastPositionUpdate >= positionUpdateInterval) {
+                  const x = player.position.x;
+                  const y = player.position.y;
+
+                  const hasMoved = Math.abs(x - lastSentPos.x) > 0.01 || Math.abs(y - lastSentPos.y) > 0.01;
+
+                  if (hasMoved) {
+                        socket.emit("updatePosition", {
+                              name: Playername,
+                              position: { x, y },
+                              rotation: player.rotation.z,
+                              currentKeys
+                        });
+                        lastSentPos = { x, y };
+                        lastPositionUpdate = now;
+                  }
+            }
+      }
+
+      function animate() {
+            requestAnimationFrame(animate);
+            if (!player) return;
+
+            handleMovement(); 
+            smoothEnemyMovement();
+
+            playerx = Math.trunc(player.position.x);
+            playery = Math.trunc(player.position.y);
+            document.getElementById("PosText").innerHTML = `Pos: X: ${playerx} Y: ${playery}`;
+
+            dashpower = Math.min(100, dashpower + dashRegenRate);
+            
+
+            camera.position.set(player.position.x, player.position.y, 5);
+            camera.lookAt(player.position);
+            updateCameraZoom();
+            updateGradientTiles();
+            updateHealthUI();
+            updateBullets();
+            emitPositionIfChanged();
+            updateDashClones();
+            if (isDashing && performance.now() - dashStartTime > dashDuration) {
+                  isDashing = false;
+            }
+            function updateDashClones() {
+                  const toKeep = [];
+
+                  for (const clone of dashClones) {
+                        const move = clone.userData.direction.clone().multiplyScalar(0.6); 
+                        clone.position.add(move);
+                        clone.userData.distance += move.length();
+
+                        clone.material.opacity *= 0.9;
+            
+                        if (clone.userData.distance < dashDistance) {
+                              toKeep.push(clone);
+                        } else {
+                              scene.remove(clone);
+                        }
+                  }
+                  dashClones = toKeep;
+            }
+            renderer.render(scene, camera);
+
+      }
+      window.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX - window.innerWidth / 2;
+            mouseY = -(e.clientY - window.innerHeight / 2);
+
+            if (!player || isDead) return;
+      
+            const newRotation = Math.atan2(mouseY, mouseX) - Math.PI / 2;
+            player.rotation.z = newRotation;
+
+            if (
+                  lastSentRotation === null ||
+                  Math.abs(newRotation - lastSentRotation) > 0.001
+            ) {
+                  lastSentRotation = newRotation;
+                  socket.emit("updateRotation", {
+                        name: Playername,
+                        rotation: newRotation
+                  });
+            }
+      });
+
+
+      
+      function smoothEnemyMovement() {
+            const maxSpeed = 0.5;
+            const snapThreshold = 0.5;
+
+            for (const name in enemies) {
+                  const enemy = enemies[name];
+
+                  if (!enemy.userData || !enemy.userData.targetPosition || !enemy.userData.velocity) continue;
+
+                  const target = enemy.userData.targetPosition;
+                  const velocity = enemy.userData.velocity;
+
+                  const toTarget = new THREE.Vector3().subVectors(target, enemy.position);
+                  const distance = toTarget.length();
+
+                  if (distance > snapThreshold) {
+                        toTarget.normalize().multiplyScalar(moveAcceleration); 
+                        velocity.add(toTarget);
+                        if (velocity.length() > maxSpeed) {
+                              velocity.setLength(maxSpeed);
+                        }
+                              velocity.multiplyScalar(friction); 
+                              enemy.position.add(velocity);
+                        } else {
+                              enemy.position.copy(target);
+                              velocity.set(0, 0, 0);
+                        }
+                  }
+      }
+
+
+
+
+
+      
+      function startGame() {  
+		renderer = new THREE.WebGLRenderer({ canvas: gameContainer, antialias: true });
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		document.getElementById("PosText").style.visibility = "visible";
+		document.getElementById("Healthbox").style.visibility = "visible";
+
+		scene = new THREE.Scene();
+		camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+		createGradientTiles();
+
+		const geometry = new THREE.BufferGeometry();
+		const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
+		let material; 
+		geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+		if (whatteam === "red") { 
+			material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide });
+		} else if (whatteam === "blue") {
+			material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide });
+		} else {
+			material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); 
+		}
+		player = new THREE.Mesh(geometry, material);
+		scene.add(player);
+
+		// Set player's position randomly within -20 to 20 range
+		player.position.set(
+			Math.random() * 40 - 20, // Random X between -20 and 20
+			Math.random() * 40 - 20, // Random Y between -20 and 20
+			0
+		);
+
+		scalePlayer();
+
+		window.addEventListener("resize", () => {
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			scalePlayer();
+		});
+		
+
+		document.addEventListener("keydown", onKeyDown);
+		document.addEventListener("keyup", onKeyUp);
+
+		gameStarted = true;
+
+		if (typeof animate === "function") {
+			animate();
+		} else {
+			console.error("animate function is missing.");
+		}
+
+
+
+		if (typeof Playername !== "undefined") {
+			socket.emit("newPlayer", Playername, whatteam);
+
+
+			socket.emit("updatePosition", {
+				position: { x: player.position.x, y: player.position.y },
+				rotation: player.rotation.z,
+				currentKeys
+			});
+		} 	else {
+				console.error("Playername is undefined.");
+			}
+	  }	
+
+    
+            socket.on("CreateEnemy", ({ name, x, y, whatteam }) => {
+    console.log(`Creating enemy: ${name} | Team: ${whatteam}`);
+    
+    if (!enemies[name]) {
+        const enemy = createNewEnemy(name, whatteam);
+        enemy.position.set(x, y, 0);
+        enemy.userData = {
+            targetPosition: new THREE.Vector3(x, y, 0),
+            velocity: new THREE.Vector3(0, 0, 0)
+        };
+
+        const sX = Math.max(0.1, window.innerWidth / 1920);
+        const sY = Math.max(0.1, window.innerHeight / 1080);
+        enemy.scale.set(sX, sY, 1);
+
+        enemies[name] = enemy;
+        scene.add(enemy);
+    }
+});
+
+// Attach playDash event listener once
+socket.on("playDash", ({ direction, position, name }) => {
+    if (name !== Playername) {
+        const ghost = createDashClone();
+        ghost.position.set(position.x, position.y, 0);
+        ghost.userData = {
+            direction: new THREE.Vector3(direction.x, direction.y, direction.z || 0),
+            distance: 0
+        };
+
+        dashClones.push(ghost);
+        scene.add(ghost);
+    }
+});
+
+
+    
+      let lastEmit = 0;
+      const emitDelay = 1000 / 30;
+
+      function emitKeys(state) {
+            const now = Date.now();
+            if (now - lastEmit > emitDelay) {
+                  lastEmit = now;
+                  socket.emit("updatePosition", state, { currentKeys });
+            }
+      }
+
+
+ 
+  socket.on("playerDied", ({ target, killer }) => {
+    if (isDead) {
+      document.getElementById("DeathScreen").style.display = "flex";
+      document.getElementById("DeathCauseText").textContent = `Eliminated by ${killer}`;
+    }
+  });
+
+ 
+
+  socket.on("updateLeaderboard", (players) => {
+    leaderboardBox.innerHTML = '';
+    players.sort((a, b) => b.elims - a.elims);
+    
+    players.forEach((player, index) => {
+        const entry = document.createElement("div");
+        entry.className = "leaderboard-entry";
+
+        const rankBox = document.createElement("span");
+        rankBox.className = "rank-box";
+        rankBox.textContent = index + 1;
+        rankBox.style.background = index === 0 ? "linear-gradient(to bottom, gold, #FFC107)" :
+                                   index === 1 ? "linear-gradient(to bottom, silver, #CCC)" :
+                                   index === 2 ? "linear-gradient(to bottom, #cd7f32, #a97142)" : "#888";
+
+        const playerName = document.createElement("span");
+        playerName.className = "player-name";
+        playerName.textContent = `${player.name} ${player.elims} Elims`;
+
+        entry.appendChild(rankBox);
+        entry.appendChild(playerName);
+        leaderboardBox.appendChild(entry);
+    });
+});
+
+      function scalePlayer() {
+    const baseWidth = 1920, baseHeight = 1080;
+    const sX = Math.max(0.1, window.innerWidth / baseWidth);
+    const sY = Math.max(0.1, window.innerHeight / baseHeight);
+    player.scale.set(sX, sY, 1);
+}
+
+      function isPlayerMoving() {
+            return currentKeys.w || currentKeys.a || currentKeys.s || currentKeys.d;
+      }
+
+      function onKeyUp(event) {
+            if (isDead || isTyping) return;
+            const key = event.key.toLowerCase();
+            if (["w", "a", "s", "d"].includes(key)) {
+                  currentKeys[key] = false;
+            }
+
+            if (!isPlayerMoving() && key !== " ") {
+                  ismoving = false;
+                  zoomcamera();
+            }
+      }
+
+
+
+      function onKeyDown(event) {
+            if (isDead || isTyping) return;
+            const key = event.key.toLowerCase();
+            if (["w", "a", "s", "d"].includes(key)) {
+                  currentKeys[key] = true;
+            }
+
+            if (["w", "a", "s", "d", " "].includes(key)) {
+                  ismoving = true;
+                  zoomcamera();
+            }
+            if (key === " " && !isDashing && dashpower >= 20 && Date.now() - lastDashTime > dashCooldown) {
+                  dashpower -= 20;
+                  lastDashTime = Date.now();
+                  isDashing = true;
+                  dashStartTime = performance.now();
+            
+                  dashDirection.set(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), player.rotation.z);
+
+
+                  const dashVelocity = dashDirection.clone().multiplyScalar(dashDistance);
+                  playerVelocity.add(dashVelocity);
+
+                  spawnDashClones();
+
+                  socket.emit("dash", {
+                        name: Playername,
+                        direction: { x: dashDirection.x, y: dashDirection.y },
+                        position: { x: player.position.x, y: player.position.y }
+                  });
+            }
+
+
+      }
+
+
+      
+
+
+
+      function updateBullets() {
+            const bulletsToKeep = [];
+
+            for (const bullet of bullets) {
+                  if (!(bullet.direction instanceof THREE.Vector3)) {
+                        bullet.direction = new THREE.Vector3(bullet.direction.x, bullet.direction.y, bullet.direction.z || 0);
+                  }
+
+                  const movement = bullet.direction.clone().multiplyScalar(bulletSpeed);
+                  bullet.mesh.position.add(movement);
+                  bullet.distanceTraveled += movement.length();
+
+
+                  for (const [name, enemy] of Object.entries(enemies)) {
+                        if (bullet.owner !== name && bullet.mesh.position.distanceTo(enemy.position) < 1) {
+                              console.log(`${bullet.owner} hit ${name}`);
+
+
+                              socket.emit("damagePlayer", {
+                                    target: name, 
+                                    amount: 90,
+                                    from: Playername
+                              });
+
+
+                              scene.remove(bullet.mesh);
+                              continue; 
+                        }
+                  }
+
+                  if (bullet.owner === Playername) {
+                        if (bullet.mesh.position.distanceTo(player.position) < 1) {
+                              continue; 
+                        }
+                  }
+
+                  if (bullet.distanceTraveled < maxBulletDistance) {
+                        bulletsToKeep.push(bullet);
+                  } else {
+                        scene.remove(bullet.mesh);
+                  }
+            }
+
+            bullets = bulletsToKeep;
+      }
+
+
+      function createBulletMesh() {
+            const baseWidth = 1920, baseHeight = 1080;
+            const scale = Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight);
+
+
+            const geometry = new THREE.BoxGeometry(1 * scale, 0.2 * scale, 0.02);
+            const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const mesh = new THREE.Mesh(geometry, material);
+
+            return mesh;
+      }
+
+
+
+      window.addEventListener("click", (event) => {
+            if (!player || isDead || !gameStarted) return;
+			if (event.target === chatTextBox) return;
+            const mouse = new THREE.Vector2(
+                  (event.clientX / window.innerWidth) * 2 - 1,
+                  -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
+            const vector2D = vector.clone().setZ(0);
+            const direction = vector2D.sub(player.position.clone().setZ(0)).normalize();
+
+            const bullet = {
+                  mesh: createBulletMesh(),
+                  direction: direction,
+                  distanceTraveled: 0
+            };
+
+            const tipOffset = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), player.rotation.z);
+            const bulletStartPos = player.position.clone().add(tipOffset);
+            bullet.mesh.position.copy(bulletStartPos);
+            bullet.mesh.rotation.z = Math.atan2(direction.y, direction.x);
+
+            scene.add(bullet.mesh);
+            bullets.push(bullet);
+            socket.emit("shoot", {
+                  direction: direction,
+                  position: bulletStartPos,
+                  speed: bulletSpeed,
+                  owner: Playername, 
+                  id: generateBulletID() 
+            });
+
+      });
+
+      function generateBulletID() {
+            return `${Playername}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      }
+
+      let lastMoveTime = performance.now();
+
+      function handleMovement() {
+            if (!player || isDead) return;
+
+            const now = performance.now();
+            let deltaTime = (now - lastMoveTime) / 1000; // seconds
+            lastMoveTime = now;
+
+            // Clamp deltaTime to prevent spikes (tab switch / lag)
+            deltaTime = Math.min(deltaTime, 0.05); // max 50ms
+
+            let dx = 0, dy = 0;
+            if (currentKeys.w) dy += 1;
+            if (currentKeys.s) dy -= 1;
+            if (currentKeys.a) dx -= 1;
+            if (currentKeys.d) dx += 1;
+
+            const inputVector = new THREE.Vector3(dx, dy, 0);
+            if (inputVector.length() > 0) {
+                  inputVector.normalize().multiplyScalar(moveAcceleration * deltaTime);
+                  playerVelocity.add(inputVector);
+            }
+
+            // Velocity cap
+            const maxSpeed = 4; // units per second
+            if (playerVelocity.length() > maxSpeed) {
+                  playerVelocity.setLength(maxSpeed);
+            }
+
+            // Apply friction scaled for deltaTime
+            const frictionFactor = Math.pow(friction, deltaTime * 60); // 60 = baseline FPS
+            playerVelocity.multiplyScalar(frictionFactor);
+
+            const movement = playerVelocity.clone().multiplyScalar(deltaTime);
+            player.position.add(movement);
+      }
+
+
+      // UI
+      function updateHealthUI() {
+            document.getElementById("HealthText").innerText = Math.trunc(health);
+            document.getElementById("Health").style.width = health + "%";
+            document.getElementById("Health").style.backgroundColor =
+                  health > 50 ? "#00FF00" : health > 20 ? "#FFFF00" : "#FF0000";
+      }
+
+
+
+      // gradient's 
+      function createGradientTexture() {
+            const size = 512;
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+            gradient.addColorStop(0, 'rgba(0, 241, 255, 0.4)');
+            gradient.addColorStop(1, 'black');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            return new THREE.CanvasTexture(canvas);
+      }
+
+      function createGradientTiles() {
+            const texture = createGradientTexture();
+            for (let x = -tilesPerRow; x <= tilesPerRow; x++) {
+                  for (let y = -tilesPerRow; y <= tilesPerRow; y++) {
+                        const geometry = new THREE.PlaneGeometry(tileSize, tileSize);
+                        const material = new THREE.MeshBasicMaterial({ map: texture, depthWrite: false });
+                        const tile = new THREE.Mesh(geometry, material);
+                        tile.position.set(x * tileSize, y * tileSize, -2);
+                        scene.add(tile);
+                        gradientTiles.push(tile);
+                  }
+            }
+      }
+
+      function updateGradientTiles() {
+            const offsetX = Math.floor(player.position.x / tileSize);
+            const offsetY = Math.floor(player.position.y / tileSize);
+            let index = 0;
+            for (let x = -tilesPerRow; x <= tilesPerRow; x++) {
+                  for (let y = -tilesPerRow; y <= tilesPerRow; y++) {
+                        const tile = gradientTiles[index++];
+                        tile.position.x = (x + offsetX) * tileSize;
+                        tile.position.y = (y + offsetY) * tileSize;
+                  }
+            }
+      }
+      // Leaderboard
+      socket.on("updateLeaderboard", (players) => {
+                  leaderboardBox.innerHTML = '';
+                  players.sort((a, b) => b.elims - a.elims);
+                  players.forEach((player, index) => {
+                  const entry = document.createElement("div");
+                  entry.className = "leaderboard-entry";
+
+                  const rankBox = document.createElement("span");
+                  rankBox.className = "rank-box";
+                  rankBox.textContent = index + 1;
+                  rankBox.style.background = index === 0 ? "linear-gradient(to bottom, gold, #FFC107)" :
+                              index === 1 ? "linear-gradient(to bottom, silver, #CCC)" :
+                              index === 2 ? "linear-gradient(to bottom, #cd7f32, #a97142)" : "#888";
+
+                  const playerName = document.createElement("span");
+                  playerName.className = "player-name";
+                  playerName.textContent = `${player.name} ${player.elims} Elims`;
+
+                  entry.appendChild(rankBox);
+                  entry.appendChild(playerName);
+                  leaderboardBox.appendChild(entry);
+            });
+      });
+
+      // camera
+      let targetZoom = 1.0;
+      let zoomSpeed = 0.2;
+
+      function zoomcamera() {
+            targetZoom = ismoving ? 0.9 : 1.0;
+      }
+
+      function updateCameraZoom() {
+            if (!camera) return;
+
+            const zoomDiff = targetZoom - camera.zoom;
+            if (Math.abs(zoomDiff) > 0.001) {
+                  camera.zoom += zoomDiff * zoomSpeed;
+                  camera.updateProjectionMatrix();
+            }
+      }
+      // dash stuff 
+      socket.on("playDash", ({ direction, position, name }) => {
+            if (name !== Playername) {
+                  const ghost = createDashClone();
+                  ghost.position.copy(position);
+                  ghost.userData = {
+                        direction: new THREE.Vector3(direction.x, direction.y, direction.z || 0),
+                        distance: 0
+                  };
+                  dashClones.push(ghost);
+                  scene.add(ghost);
+            }
+      });
+      function updateDashClones() {
+            const toKeep = [];
+
+            for (const clone of dashClones) {
+                  const move = clone.userData.direction.clone().multiplyScalar(0.5); 
+                  clone.position.add(move);
+                  clone.userData.distance += move.length();
+      
+                  if (clone.userData.distance < dashDistance) {
+                        toKeep.push(clone);
+                  } else {
+                        scene.remove(clone);
+                  }
+            }
+            dashClones = toKeep;
+      }
+      function createDashClone() {
+            const geometry = new THREE.CircleGeometry(0.25, 12);
+            const material = new THREE.MeshBasicMaterial({
+                  color: 0x00ffff,
+                  transparent: true,
+                  opacity: 0.3,
+                  depthWrite: false
+            });
+            return new THREE.Mesh(geometry, material);
+      }
+
+      function spawnDashClones() {
+            const backOffset = 0.8;
+            const spread = 0.4;
+
+            const forward = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), player.rotation.z);
+            const back = forward.clone().negate();
+            const right = new THREE.Vector3(-forward.y, forward.x, 0); // perpendicular to forward
+
+            const backOrigin = player.position.clone().add(back.clone().multiplyScalar(backOffset));
+
+            const clonePositions = [
+                  backOrigin.clone().add(right.clone().multiplyScalar(-1.5 * spread)),
+                  backOrigin.clone().add(right.clone().multiplyScalar(-0.5 * spread)),
+                  backOrigin.clone().add(right.clone().multiplyScalar(0.5 * spread)),
+                  backOrigin.clone().add(right.clone().multiplyScalar(1.5 * spread))
+            ];
+
+            for (const pos of clonePositions) {
+                  const clone = createDashClone();
+                  clone.position.copy(pos);
+                  clone.userData = {
+                        direction: forward.clone().negate(), 
+                        distance: 0
+                  };
+                  dashClones.push(clone);
+                  scene.add(clone);
+            }
+      }
+	
+	// chat stuff
+	
+	SendButton.addEventListener("click", (e) => {
+		e.stopPropagation();
+		handleSendMessage();
+	});
+	
+	chatTextBox.addEventListener("keydown", function (event) {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault(); 
+			if (whatchat === "1") {
+				handleSendGlobalMessage();
+			} else if (whatchat === "2") {
+				handleSendTeamMessage();
+			}
+		}
+	});
+
+	
+	function handleSendGlobalMessage() {
+		socket.emit("globalmessage", `${Playername}: ${chatTextBox.value}`);
+		chatTextBox.value = "";
+	}
+	
+	function handleSendTeamMessage() {
+		socket.emit(whatteam + "message", `${Playername}: ${chatTextBox.value}`);
+		chatTextBox.value = "";
+	}
+	
+	socket.on("globalmessage", (msg) => {
+		let messageElement = document.createElement("div");
+		messageElement.classList.add("player-message");
+		messageElement.textContent = msg;
+
+		let chatBox = document.getElementById("ChatBox");
+		if (!chatBox) {
+			console.error("ChatBox div not found!");
+			return;
+		}
+
+
+		let isAtBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 10; 
+
+		chatBox.appendChild(messageElement);
+
+		
+		if (isAtBottom) {
+			chatBox.scrollTop = chatBox.scrollHeight; 
+		}
+	});
+	
+	socket.on("globalmessage", (msg) => {
+		let messageElement = document.createElement("div");
+		messageElement.classList.add("player-message");
+		messageElement.textContent = msg;
+
+		let chatBox = document.getElementById("ChatBox");
+		if (!chatBox) {
+			console.error("ChatBox div not found!");
+			return;
+		}
+
+
+		let isAtBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 10; 
+
+		chatBox.appendChild(messageElement);
+
+		
+		if (isAtBottom) {
+			chatBox.scrollTop = chatBox.scrollHeight; 
+		}
+	});
+
+
+	// Red and Blue kills
+	
+	let redkills = 0;
+	let bluekills = 0;
+
+	socket.on("RedKills", (count) => {
+		redkills = count;
+		updateKillPercentages();
+	});
+
+	socket.on("BlueKills", (count) => {
+		bluekills = count;
+		updateKillPercentages();
+	});
+
+	function updateKillPercentages() {
+    let totalKills = redkills + bluekills;
+    if (totalKills > 0) {
+        let redPercentage = (redkills / totalKills) * 100;
+        let bluePercentage = (bluekills / totalKills) * 100;
+
+        console.log(`Red Team: ${redPercentage.toFixed(2)}%`);
+        console.log(`Blue Team: ${bluePercentage.toFixed(2)}%`);
+    } else {
+        console.log(`Red Team: 0%`);
+        console.log(`Blue Team: 0%`);
+    }
+}
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
