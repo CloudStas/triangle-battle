@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Triangle Battle</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 8vw;
+            margin-top: 10vh; /* Increased top margin for the title to push it down slightly */
+            color: #00ffff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        .button-container {
+            margin-top: 15vh; /* Significantly increased top margin to push buttons lower */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .action-button {
+            width: 60vw;
+            max-width: 300px;
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            background-color: #00ffff;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::after {
+            content: '→';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: right 0.3s ease;
+        }
+
+        .action-button:hover::after {
+            right: 1rem;
+        }
+
+        .action-button:hover {
+            background-color: #00ccff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Triangle Battle</h1>
+
+    <div class="button-container">
+        <button class="action-button" id="loginButton">Log in</button>
+        <button class="action-button" id="signupButton">Sign up</button>
+    </div>
+
+    <script>
+        const loginButton = document.getElementById('loginButton');
+        const signupButton = document.getElementById('signupButton');
+
+        if (loginButton) {
+            loginButton.addEventListener('click', function() {
+                window.location.href = '/login';
+            });
+        } else {
+            console.warn("Login button not found!");
+        }
+
+        if (signupButton) {
+            signupButton.addEventListener('click', function() {
+                window.location.href = '/signup';
+            });
+        } else {
+            console.warn("Signup button not found!");
+        }
+    </script>
+
+</body>
+</html>

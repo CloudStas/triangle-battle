@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - Triangle Battle</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 6vw;
+            margin-bottom: 3vh;
+            color: #00ffff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        .login-form {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            width: 80vw;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #00ffff;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 0.8rem 10px;
+            border: 1px solid #00ffff;
+            border-radius: 0.3rem;
+            background-color: #1e1e2f;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            border-color: #00ccff;
+            box-shadow: 0 0 8px rgba(0, 204, 255, 0.6);
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #00ffff;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .action-button::after {
+            content: '';
+        }
+
+        .action-button:hover {
+            background-color: #00ccff;
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.8);
+        }
+
+        .signup-link {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: #00ffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #00ccff;
+            text-decoration: underline;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #loadingOverlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #loadingMessage {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .container {
+            --uib-size: 40px;
+            --uib-color: white;
+            --uib-speed: 1s;
+            --uib-stroke: 3px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: var(--uib-size);
+            width: var(--uib-size);
+        }
+        .line {
+            position: absolute;
+            top: 0;
+            left: calc(50% - var(--uib-stroke) / 2);
+            display: flex;
+            align-items: flex-start;
+            height: 100%;
+            width: var(--uib-stroke);
+        }
+        .line::before {
+            content: '';
+            height: 22%;
+            width: 100%;
+            border-radius: calc(var(--uib-stroke) / 2);
+            background-color: var(--uib-color);
+            animation: pulse calc(var(--uib-speed)) ease-in-out infinite;
+            transition: background-color 0.3s ease;
+            transform-origin: center bottom;
+        }
+        .line:nth-child(1) { transform: rotate(calc(360deg / -12 * 1)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 1); } }
+        .line:nth-child(2) { transform: rotate(calc(360deg / -12 * 2)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 2); } }
+        .line:nth-child(3) { transform: rotate(calc(360deg / -12 * 3)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 3); } }
+        .line:nth-child(4) { transform: rotate(calc(360deg / -12 * 4)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 4); } }
+        .line:nth-child(5) { transform: rotate(calc(360deg / -12 * 5)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 5); } }
+        .line:nth-child(6) { transform: rotate(calc(360deg / -12 * 6)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 6); } }
+        .line:nth-child(7) { transform: rotate(calc(360deg / -12 * 7)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 7); } }
+        .line:nth-child(8) { transform: rotate(calc(360deg / -12 * 8)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 8); } }
+        .line:nth-child(9) { transform: rotate(calc(360deg / -12 * 9)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 9); } }
+        .line:nth-child(10) { transform: rotate(calc(360deg / -12 * 10)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 10); } }
+        .line:nth-child(11) { transform: rotate(calc(360deg / -12 * 11)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 11); } }
+        .line:nth-child(12) { transform: rotate(calc(360deg / -12 * 12)); &::before { animation-delay: calc(var(--uib-speed) / -12 * 12); } }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                transform: scaleY(0.75);
+                opacity: 0;
+            }
+            20% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        #errorMessage {
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome Back!</h1>
+
+    <form class="login-form" id="loginForm">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit" class="action-button">Log In</button>
+
+        <p class="signup-link">Don't have an account? <a href="/signup">Sign up here</a></p>
+    </form>
+
+    <div id="errorMessage"></div>
+
+    <div id="loadingOverlay">
+        <div class="container">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div> </div>
+        <p id="loadingMessage">Logging in...</p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const loginForm = document.getElementById('loginForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        function showLoading(message = 'Logging in...') {
+            loadingMessage.textContent = message;
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        function showErrorMessage(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showErrorMessage("Please enter both username and password.");
+                return;
+            }
+
+            const encodedPassword = btoa(password);
+
+            showLoading('Logging in...');
+            socket.emit('loginAttempt', { username: username, encodedPassword: encodedPassword });
+        });
+
+        socket.on('loginResponse', (data) => {
+            hideLoading();
+
+            if (data.success) {
+                window.location.href = '/dashboard';
+            } else {
+                showErrorMessage('Incorrect username or password');
+            }
+        });
+    </script>
+
+</body>
+</html>

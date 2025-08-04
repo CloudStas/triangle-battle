@@ -4,902 +4,986 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cool Triangles</title>
-  <link rel="icon" href="/favicon.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Cool Triangles</title>
+	<link rel="icon" href="/favicon.png">
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<link rel="manifest" href="manifest.json">
 
 
 
   <style>
-	/* === General Styles === */
-body {
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #1a1a1a; /* Dark background for game aesthetic */
-    user-select: none; /* Standard property */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Edge */
-    -webkit-user-drag: none; /* Prevent dragging in WebKit browsers */
-    -khtml-user-drag: none; /* Older WebKit browsers */
-    touch-action: manipulation; /* Improve touch behavior on mobile */
-}
-
-/* === Start Screen === */
-#StartScreen {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#StartScreenLayout {
-    width: 80%;
-    max-width: 600px;
-    height: 80%;
-    background: rgba(0, 255, 255, 0.2); /* Subtle cyan with transparency */
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    backdrop-filter: blur(5px); /* Glassmorphism effect */
-}
-
-#ErrorMessage {
-    color: #ff4d4d;
-    visibility: hidden;
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(12px, 2vw, 16px);
-    font-weight: 700;
-}
-
-#DisplayNameText {
-    font-size: clamp(18px, 3vw, 24px);
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-#DisplayNameInput {
-    margin-top: 20px;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #00ffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    width: 70%;
-    max-width: 400px;
-    color: #ffffff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#DisplayNameInput:focus {
-    border-color: #00ccff;
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    outline: none;
-}
-
-#JoinButton {
-    margin-top: 20px;
-    background: linear-gradient(45deg, #00ff00, #33cc33);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 24px;
-    font-size: clamp(14px, 2.5vw, 16px);
-    font-weight: 700;
-    color: #000;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#JoinButton:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-/* === Game Canvas === */
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid #333;
-    z-index: 10;
-}
-
-/* === HUD Elements === */
-#PosText, #Healthbox, #Healthbar, #Health, #HealthText, #plustext {
-    position: absolute;
-    transform-origin: top left;
-}
-
-#PosText {
-    visibility: visible;
-    display: block;
-    z-index: 16;
-    color: #ffffff;
-    top: 2%;
-    left: 2%;
-    font-size: clamp(12px, 1.5vw, 16px);
-    user-select: none;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-#Healthbox {
-    visibility: hidden;
-    z-index: 16;
-    left: 2%;
-    bottom: 2%;
-    width: 30%;
-    height: 10%;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-    border: 2px solid #00ff00;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-#plustext {
-    visibility: visible;
-	position: absolute;
-    z-index: 17;
-    color: #00ff00;
-    user-select: none;
-    top: 67.5%;
-    right: 92.5%;
-    transform: translateY(-50%);
-    font-size: clamp(20px, 1.5vw, 200px);
-}
-
-#Healthbar {
-    visibility: visible;
-	position: absolute;
-    z-index: 18;
-    background: rgba(50, 50, 50, 0.9);
-    top: 40%;
-    right: 12.5%;
-    width: 75%;
-    height: 50%;
-    border-radius: 5px;
-}
-
-#Health {
-    visibility: visible;
-    z-index: 19;
-    background: linear-gradient(90deg, #00ff00, #33cc33);
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.3s ease;
-}
-
-#HealthText {
-    visibility: visible;
-	position: absolute;
-    z-index: 20;
-    color: #ffffff;
-    font-size: clamp(12px, 1.8vw, 16px);
-    user-select: none;
-    top: 70%;
-    right: 2%;
-    transform: translateY(-50%);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-#DashPowerbar {
-    visibility: visible;
-    position: absolute;
-    z-index: 30;
-    background: rgba(50, 50, 50, 0.9);
-    top: 20%;
-    left: 12.5%;
-    width: 75%;
-    height: 10%;
-    border-radius: 5px;
-	flex-shrink: 0;
-    flex-grow: 0;
-}
-
-#Dashpower {
-    position: relative;
-    visibility: visible;
-    z-index: 10000;
-    background: linear-gradient(90deg, #ff9900, #ff6600);
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.3s ease;
-}
-
-
-#DashPowerText {
-    visibility: visible;
-	position: absolute;
-    z-index: 21;
-    color: #ffffff;
-    font-size: clamp(12px, 1.8vw, 16px);
-    user-select: none;
-    top: 30%;
-    right: 2%;
-    transform: translateY(-50%);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.energy-icon {
-    visibility: visible;
-    position: absolute;
-    z-index: 22;
-
-}
-
-/* === Leaderboard === */
-#Leaderboard {
-    position: absolute;
-    top: 2%;
-    right: 2%;
-    width: 15%;
-    min-width: 150px;
-    height: 30%;
-    background: transparent;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-}
-
-#LeaderboardBox {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    right: 0;
-    background: rgba(225, 225, 225, 0.7);
-    border-radius: 10px;
-    overflow: auto;
-    z-index: 22;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-.leaderboard-entry {
-    position: relative;
-    z-index: 23;
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.leaderboard-entry:last-child {
-    border-bottom: none;
-}
-
-.rank-box {
-    background: linear-gradient(to bottom, #ffd700, #ffaa00);
-    color: #000;
-    font-size: clamp(12px, 1.5vw, 14px);
-    font-weight: 700;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    margin-right: 12px;
-    z-index: 24;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.player-name {
-    z-index: 25;
-    flex-grow: 1;
-    color: #ffffff;
-    text-align: left;
-    font-size: clamp(12px, 1.5vw, 14px);
-}
-
-/* === Chat Interface === */
-#Chat {
-    visibility: visible;
-    position: absolute;
-    z-index: 20;
-    background: rgba(225, 225, 225, 0.7);
-    top: 55%;
-    right: 2%;
-    width: 20%;
-    min-width: 200px;
-    height: 40%;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-#CloseButton {
-	visibility: visible;
-    position: absolute;
-    z-index: 21;
-	right: 2%;
-    width: 20%;
-	border-radius: 10px;
-	top: 1%;
-	background: rgba(200, 225, 225, 0.7);
-}
-
-#CloseButton i {
-  pointer-events: none;
-}
-
-#ChatAmount {
-	display: none;
-    position: absolute;
-    z-index: 30;
-	right: 5%;
-    width: 2%;
-	height: 4%;
-	top: 52.5%;
-	border-radius: 30px;
-	background-color: rgb(255,128,0);
-}
-
-#ChatAmountText {
-	visibility: visible;
-    position: absolute;
-	z-index: 32;
-	right: 22.5%;
-	top: 0%;
-	font-color: black;
-	font-size: clamp(2px, 2vw, 500px);
-}
-
-#ChatText {
-    visibility: visible;
-    z-index: 21;
-    text-color: rgba(50, 50, 50, 0.9);
-    top: 5%;
-    left: 5%;
-    font-size: clamp(14px, 1.8vw, 16px);
-    font-weight: 700;
-}
-
-#ChatBox {
-    visibility: visible;
-	position: absolute;
-    z-index: 23;
-    background: rgba(50, 50, 50, 0.9);
-    top: 7.5%;
-    left: 7.5%;
-    width: 80%;
-    height: 60%;
-    border-radius: 8px;
-    overflow: auto;
-}
-
-#ChatTextBox {
-pointer-events: auto;
-  touch-action: manipulation; /* Helps on mobile browsers */
-    visibility: visible;
-	position: absolute;
-    z-index: 23;
-    top: 70%;
-    left: 5%;
-    width: 65%;
-    height: 15%;
-     background: rgba(50, 50, 50, 0.9);
-    border: 2px solid #00ff00;
-    border-radius: 8px;
-    color: #ffffff;
-    padding: 8px;
-    font-size: clamp(12px, 1.5vw, 14px);
-}
-
-#ChatTextBox:focus {
-    border-color: #00cc00;
-    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
-    outline: none;
-}
-
-.player-message {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    color: #ffffff;
-    background: rgba(0, 255, 0, 0.2);
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    max-width: 80%;
-    z-index: 23;
-}
-
-#SendButton {
-    visibility: visible;
-	position: absolute;
-    z-index: 24;
-    top: 75%;
-    left: 82.5%;
-    background: linear-gradient(45deg, #00cc00, #00ff00);
-    border: none;
-    border-radius: 50%;
-    width: 15%;
-    height: 15%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#SendButton:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-.round-button i {
-    color: #000;
-    font-size: clamp(14px, 1.8vw, 16px);
-    z-index: 25;
-}
-
-#ChatSelect {
-    visibility: visible;
-    z-index: 24;
-    top: 5%;
-    right: 5%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #00ff00;
-    border-radius: 8px;
-    color: #ffffff;
-    padding: 5px;
-}
-
-/* === Team Kills Bar === */
-#RedVsBlueBarKills {
-    visibility: visible;
-    position: absolute;
-    z-index: 25;
-    top: 80%;
-    left: 40%;
-    width: 20%;
-    height: 8%;
-    background: rgba(225, 225, 225, 0.7);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-#RedKills {
-    visibility: visible;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #ff3333, #cc0000);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-}
-
-#BlueKills {
-    visibility: visible;
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #3333ff, #0000cc);
-    transform-origin: right;
-    transition: transform 0.3s ease;
-}
-
-#RedText {
-    z-index: 27;
-    position: absolute;
-    background: transparent;
-    top: 90%;
-    left: 40%;
-    height: 8%;
-    width: 10%;
-    text-align: center;
-    font-size: clamp(12px, 1.5vw, 14px);
-    color: #ff3333;
-    font-weight: 700;
-}
-
-#NumberForRedText {
-    position: absolute;
-    top: calc(87.5% + 4%);
-    left: 42.5%;
-    z-index: 28;
-    color: #ffffff;
-    font-size: clamp(12px, 1.5vw, 14px);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-#BlueText {
-    z-index: 27;
-    position: absolute;
-    background: transparent;
-    top: 90%;
-    left: 50%;
-    height: 8%;
-    width: 10%;
-    text-align: center;
-    font-size: clamp(12px, 1.5vw, 14px);
-    color: #3333ff;
-    font-weight: 700;
-}
-
-#NumberForBlueText {
-    position: absolute;
-    top: calc(87.5% + 4%);
-    left: 52.5%;
-    z-index: 28;
-    color: #ffffff;
-    font-size: clamp(12px, 1.5vw, 14px);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-
-
-
-#ArrowKeysButtons {
-    visibility: visible;
-    z-index: 31;
-    position: absolute;
-    width: 25%;
-    height: 35%;
-    top: 60%;
-    left: 5%;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-#DownKeyButton, #UpKeyButton, #LeftKeyButton, #RightKeyButton {
-    visibility: visible;
-    z-index: 32;
-    position: absolute;
-    width: 25%;
-    height: 25%;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    transition: background 0.2s ease;
-}
-
-#DownKeyButton:hover, #UpKeyButton:hover, #LeftKeyButton:hover, #RightKeyButton:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-#DownKeyButton {
-    top: 65%;
-    left: 37.5%;
-}
-
-#UpKeyButton {
-    top: 10%;
-    left: 37.5%;
-}
-
-#LeftKeyButton {
-    top: 37.5%;
-    left: 5%;
-}
-
-#RightKeyButton {
-    top: 37.5%;
-    left: 70%;
-}
-
-#somedivactions {
-    visibility: visible;
-    z-index: 33;
-    position: absolute;
-    width: 20%; /* Ensure this is relative to a properly sized parent */
-    min-width: 100px; /* Add a minimum width to prevent collapse */
-    height: 30%;
-    top: 55%;
-    right: 75%;
-    background: rgba(0, 0, 0, 0);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-#DashButton {
-    visibility: visible;
-    z-index: 35;
-    position: absolute;
-    width: 9%; 
-    height: 20%;
-    top: 75%;
-    left: 83%;
-    background: linear-gradient(45deg, #00cc00, #00ff00);
-    border-radius: 50%; /* Use 50% for a perfect circle */
-    font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
-    display: flex; /* Center content */
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-
-#DashButton:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-#ShootButton {
-    visibility: visible;
-    z-index: 34;
-    position: absolute;
-    width: 9%; 
-    height: 20%; 
-    top: 55%;
-    left: 90%;
-    background: linear-gradient(45deg, #cc0000, #ff0000);
-    border-radius: 50%; /* Use 50% for a perfect circle */
-    font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
-    display: flex; /* Center content */
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-
-#ShootButton:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-#Joystick {
-    position: absolute;
-    z-index: 35;
-    width: 100%;
-    height: 100%;
-    top: 0%;
-    left: 0%;
-    background: rgba(225, 225, 225, 0.7);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-#Stick {
-    position: absolute;
-    z-index: 36;
-    width: 30%;
-    height: 30%;
-    top: 40%;
-    left: 40%;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    transition: transform 0.1s ease;
-}
-
-/* === Fullscreen Overlay === */
-#fullscreenOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-}
-
-#fullscreenOverlay h2 {
-    margin-bottom: 2rem;
-    color: #ffffff;
-    font-size: clamp(20px, 3vw, 24px);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-#enterFullscreen {
-    padding: 1rem 2rem;
-    font-size: clamp(14px, 2.5vw, 16px);
-    background: linear-gradient(45deg, #00ff00, #33cc33);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#enterFullscreen:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-#noThanks {
-    color: #cccccc;
-    border: none;
-    background: none;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: clamp(12px, 2vw, 14px);
-    transition: color 0.2s ease;
-}
-
-#noThanks:hover {
-    color: #ffffff;
-}
-
-/* === Respawn Overlay and Loader === */
-#respawnOverlay, #LoadingOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 990;
-    animation: fadeIn 0.3s ease;
-}
-
-.container {
-    --uib-size: 50px;
-    --uib-color: #00ff00;
-    --uib-speed: 0.8s;
-    --uib-stroke: 4px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--uib-size);
-    width: var(--uib-size);
-    z-index: 992;
-    filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.5));
-}
-
-.line {
-    position: absolute;
-    top: 0;
-    left: calc(50% - var(--uib-stroke) / 2);
-    display: flex;
-    align-items: flex-start;
-    height: 100%;
-    width: var(--uib-stroke);
-}
-
-.line::before {
-    content: '';
-    height: 25%;
-    width: 100%;
-    border-radius: calc(var(--uib-stroke) / 2);
-    background-color: var(--uib-color);
-    animation: pulse calc(var(--uib-speed)) ease-in-out infinite;
-    transition: background-color 0.3s ease;
-    transform-origin: center bottom;
-}
-
-.line:nth-child(1) { transform: rotate(calc(360deg / -12 * 1)); }
-.line:nth-child(1)::before { animation-delay: calc(var(--uib-speed) / -12 * 1); }
-.line:nth-child(2) { transform: rotate(calc(360deg / -12 * 2)); }
-.line:nth-child(2)::before { animation-delay: calc(var(--uib-speed) / -12 * 2); }
-.line:nth-child(3) { transform: rotate(calc(360deg / -12 * 3)); }
-.line:nth-child(3)::before { animation-delay: calc(var(--uib-speed) / -12 * 3); }
-.line:nth-child(4) { transform: rotate(calc(360deg / -12 * 4)); }
-.line:nth-child(4)::before { animation-delay: calc(var(--uib-speed) / -12 * 4); }
-.line:nth-child(5) { transform: rotate(calc(360deg / -12 * 5)); }
-.line:nth-child(5)::before { animation-delay: calc(var(--uib-speed) / -12 * 5); }
-.line:nth-child(6) { transform: rotate(calc(360deg / -12 * 6)); }
-.line:nth-child(6)::before { animation-delay: calc(var(--uib-speed) / -12 * 6); }
-.line:nth-child(7) { transform: rotate(calc(360deg / -12 * 7)); }
-.line:nth-child(7)::before { animation-delay: calc(var(--uib-speed) / -12 * 7); }
-.line:nth-child(8) { transform: rotate(calc(360deg / -12 * 8)); }
-.line:nth-child(8)::before { animation-delay: calc(var(--uib-speed) / -12 * 8); }
-.line:nth-child(9) { transform: rotate(calc(360deg / -12 * 9)); }
-.line:nth-child(9)::before { animation-delay: calc(var(--uib-speed) / -12 * 9); }
-.line:nth-child(10) { transform: rotate(calc(360deg / -12 * 10)); }
-.line:nth-child(10)::before { animation-delay: calc(var(--uib-speed) / -12 * 10); }
-.line:nth-child(11) { transform: rotate(calc(360deg / -12 * 11)); }
-.line:nth-child(11)::before { animation-delay: calc(var(--uib-speed) / -12 * 11); }
-.line:nth-child(12) { transform: rotate(calc(360deg / -12 * 12)); }
-.line:nth-child(12)::before { animation-delay: calc(var(--uib-speed) / -12 * 12); }
-
-@keyframes pulse {
-    0%, 80%, 100% {
-        transform: scaleY(0.75);
-        opacity: 0;
-    }
-    20% {
-        transform: scaleY(1.2);
-        opacity: 1;
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-#ElimedText {
-  position: absolute;
-  top: 90%;
-  left: 50%;
-  transform: translateX(-50%);
-  visibility: hidden;
-  font-size: clamp(10px, 1.8vw, 2vw);
-  font-family: 'Arial', sans-serif;
-  font-weight: bold;
-  z-index: 200;
-}
-
-#DisconnectedOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-
-#DisconnectedDialog {
-  background-color: turquoise;
-  width: 50%;
-  height: 50%;
-  position: relative;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
-  border-radius: 8px;
-}
-
-#ReconnectButton {
-  background-color: red;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-#ErrorMessage {
-  display: none;
-  color: red;
-  margin-top: 15px;
-  font-weight: bold;
-}
+	body {
+		overflow: hidden;
+		margin: 0;
+		padding: 0;
+		font-family: 'Roboto', sans-serif;
+		background-color: #1a1a1a; 
+		user-select: none; 
+		-webkit-user-select: none;
+		-moz-user-select: none; 
+		-ms-user-select: none; 
+		-webkit-user-drag: none;
+		-khtml-user-drag: none;
+		touch-action: manipulation;
+	}
+
+	#StartScreen {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0%;
+		background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+		z-index: 100;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	#StartScreenLayout {
+		width: 80%;
+		max-width: 600px;
+		height: 80%;
+		background: rgba(0, 255, 255, 0.2); 
+		border-radius: 15px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+		display: flex;
+		position: relative;
+		backdrop-filter: blur(5px); 
+	}
+
+
+	#ErrorMessage {
+		color: #ff4d4d;
+		visibility: hidden;
+		position: absolute;
+		bottom: 10%;
+		left: 50%;
+		transform: translateX(-50%);
+		font-size: clamp(12px, 2vw, 16px);
+		font-weight: 700;
+	}
+
+	#DisplayNameText {
+		position: absolute;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		font-size: clamp(18px, 3vw, 24px);
+		color: #ffffff;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+		text-align: center;
+	}
+
+
+	#DisplayNameInput {
+		position: absolute;
+		top: 45%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		margin-top: 0;
+		padding: 10px;
+		font-size: 16px;
+		border: 2px solid #00ffff;
+		background-color: rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		width: 70%;
+		max-width: 400px;
+		height: auto;
+		color: #ffffff;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+
+	#DisplayNameInput:focus {
+		border-color: #00ccff;
+		box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+		outline: none;
+	}
+
+	#JoinButton {
+		background: linear-gradient(45deg, #00ff00, #33cc33);
+		border: none;
+		border-radius: 999px;
+		padding: 14px 28px;
+		font-size: clamp(14px, 2.5vw, 18px);
+		font-weight: 700;
+		color: #000;
+		cursor: pointer;
+		width: min(90%, 300px);
+		height: auto;
+		text-align: center;
+		box-shadow: 0 4px 10px rgba(0, 255, 0, 0.25);
+		transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+
+		position: absolute;
+		top: 60%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+
+	#JoinButton:hover {
+		transform: translate(-50%, -50%) scale(1.08);
+		box-shadow: 0 6px 16px rgba(0, 255, 0, 0.4);
+		background: linear-gradient(45deg, #33cc33, #00ff00);
+	}
+
+	#JoinButton:active {
+		transform: translate(-50%, -50%) scale(0.96);
+		box-shadow: 0 3px 8px rgba(0, 255, 0, 0.2);
+	}
+
+
+
+	#Socials {
+		position: absolute;
+		width: 50%;
+		height: 30%;
+		top: 82.5%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		margin-top: 0; /* optional, since transform centers it */
+		background: rgba(0, 255, 253, 0.2);
+		border-radius: 15px;
+		display: flex;
+		backdrop-filter: blur(5px);
+		z-index: 120;
+	}
+
+	#TextForGithub {
+		position: absolute;
+		font-size: clamp(10px, 1.5vw, 3vw);
+		top: 2%;
+		left: 50%;
+		transform: translateX(-50%);
+    
+		white-space: nowrap; 
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	#GithubButton {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 33.3%;
+		height: 50%;
+		border-radius: 50%;    
+		background-color: rgba(0, 0, 0, 0);
+		border: none;       
+		outline: none;       
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+		transition: box-shadow 0.3s ease;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	#GithubButton:hover {
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+	}
+
+	#GithubButton:focus {
+		outline: none;
+	}
+
+	#GithubButton svg {
+		width: 100;       
+		height: 100%;
+		fill: #000;
+	}
+
+	canvas {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: 2px solid #333;
+		z-index: 10;
+	}
+
+	#PosText, #Healthbox, #Healthbar, #Health, #HealthText, #plustext {
+		position: absolute;
+		transform-origin: top left;
+	}
+
+	#PosText {
+		visibility: visible;
+		display: block;
+		z-index: 16;
+		color: #ffffff;
+		top: 2%;
+		left: 2%;
+		font-size: clamp(12px, 1.5vw, 16px);
+		user-select: none;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	#Healthbox {
+		visibility: hidden;
+		z-index: 16;
+		left: 2%;
+		bottom: 2%;
+		width: 30%;
+		height: 10%;
+		background: rgba(0, 0, 0, 0.7);
+		border-radius: 8px;
+		border: 2px solid #00ff00;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+	}
+
+	#plustext {
+		visibility: visible;
+		position: absolute;
+		z-index: 17;
+		color: #00ff00;
+		user-select: none;
+		top: 67.5%;
+		right: 92.5%;
+		transform: translateY(-50%);
+		font-size: clamp(20px, 1.5vw, 200px);
+	}
+
+	#Healthbar {
+		visibility: visible;
+		position: absolute;
+		z-index: 18;
+		background: rgba(50, 50, 50, 0.9);
+		top: 40%;
+		right: 12.5%;
+		width: 75%;
+		height: 50%;
+		border-radius: 5px;
+	}
+
+	#Health {
+		visibility: visible;
+		z-index: 19;
+		background: linear-gradient(90deg, #00ff00, #33cc33);
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		transition: width 0.3s ease;
+	}
+
+	#HealthText {
+		visibility: visible;
+		position: absolute;
+		z-index: 20;
+		color: #ffffff;
+		font-size: clamp(12px, 1.8vw, 16px);
+		user-select: none;
+		top: 70%;
+		right: 2%;
+		transform: translateY(-50%);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	#DashPowerbar {
+		visibility: visible;
+		position: absolute;
+		z-index: 30;
+		background: rgba(50, 50, 50, 0.9);
+		top: 20%;
+		left: 12.5%;
+		width: 75%;
+		height: 10%;
+		border-radius: 5px;
+		flex-shrink: 0;
+		flex-grow: 0;
+	}
+
+	#Dashpower {
+		position: relative;
+		visibility: visible;
+		z-index: 10000;
+		background: linear-gradient(90deg, #ff9900, #ff6600);
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		transition: width 0.3s ease;
+	}
+
+
+	#DashPowerText {
+		visibility: visible;
+		position: absolute;
+		z-index: 21;
+		color: #ffffff;
+		font-size: clamp(12px, 1.8vw, 16px);
+		user-select: none;
+		top: 30%;
+		right: 2%;
+		transform: translateY(-50%);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	.energy-icon {
+		visibility: visible;
+		position: absolute;
+		z-index: 22;
+
+	}
+
+	/* === Leaderboard === */
+	#Leaderboard {
+		position: absolute;
+		top: 2%;
+		right: 2%;
+		width: 15%;
+		min-width: 150px;
+		height: 30%;
+		background: transparent;
+		z-index: 20;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 10px;
+	}
+
+	#LeaderboardBox {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		right: 0;
+		background: rgba(225, 225, 225, 0.7);
+		border-radius: 10px;
+		overflow: auto;
+		z-index: 22;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	}
+
+	.leaderboard-entry {
+		position: relative;
+		z-index: 23;
+		display: flex;
+		align-items: center;
+		padding: 8px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		font-weight: 700;
+		color: #ffffff;
+	}
+
+	.leaderboard-entry:last-child {
+		border-bottom: none;
+	}
+
+	.rank-box {
+		background: linear-gradient(to bottom, #ffd700, #ffaa00);
+		color: #000;
+		font-size: clamp(12px, 1.5vw, 14px);
+		font-weight: 700;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+		margin-right: 12px;
+		z-index: 24;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+	}
+
+	.player-name {
+		z-index: 25;
+		flex-grow: 1;
+		color: #ffffff;
+		text-align: left;
+		font-size: clamp(12px, 1.5vw, 14px);
+	}
+
+	/* === Chat Interface === */
+	#Chat {
+		visibility: visible;
+		position: absolute;
+		z-index: 20;
+		background: rgba(225, 225, 225, 0.7);
+		top: 55%;
+		right: 2%;
+		width: 20%;
+		min-width: 200px;
+		height: 40%;
+		border-radius: 10px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	}
+
+	#CloseButton {
+		visibility: visible;
+		position: absolute;
+		z-index: 21;
+		right: 2%;
+		width: 20%;
+		border-radius: 10px;
+		top: 1%;
+		background: rgba(200, 225, 225, 0.7);
+	}
+
+	#CloseButton i {
+	  pointer-events: none;
+	}
+
+	#ChatAmount {
+		display: none;
+		position: absolute;
+		z-index: 30;
+		right: 5%;
+		width: 2%;
+		height: 4%;
+		top: 52.5%;
+		border-radius: 30px;
+		background-color: rgb(255,128,0);
+	}
+
+	#ChatAmountText {
+		visibility: visible;
+		position: absolute;
+		z-index: 32;
+		right: 22.5%;
+		top: 0%;
+		font-color: black;
+		font-size: clamp(2px, 2vw, 500px);
+	}
+
+	#ChatText {
+		visibility: visible;
+		z-index: 21;
+		text-color: rgba(50, 50, 50, 0.9);
+		top: 5%;
+		left: 5%;
+		font-size: clamp(14px, 1.8vw, 16px);
+		font-weight: 700;
+	}
+
+	#ChatBox {
+		visibility: visible;
+		position: absolute;
+		z-index: 23;
+		background: rgba(50, 50, 50, 0.9);
+		top: 7.5%;
+		left: 7.5%;
+		width: 80%;
+		height: 60%;
+		border-radius: 8px;
+		overflow: auto;
+	}
+
+	#ChatTextBox {
+	pointer-events: auto;
+	  touch-action: manipulation; /* Helps on mobile browsers */
+		visibility: visible;
+		position: absolute;
+		z-index: 23;
+		top: 70%;
+		left: 5%;
+		width: 65%;
+		height: 15%;
+		 background: rgba(50, 50, 50, 0.9);
+		border: 2px solid #00ff00;
+		border-radius: 8px;
+		color: #ffffff;
+		padding: 8px;
+		font-size: clamp(12px, 1.5vw, 14px);
+	}
+
+	#ChatTextBox:focus {
+		border-color: #00cc00;
+		box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+		outline: none;
+	}
+
+	.player-message {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		color: #ffffff;
+		background: rgba(0, 255, 0, 0.2);
+		padding: 10px;
+		margin: 5px;
+		border-radius: 8px;
+		max-width: 80%;
+		z-index: 23;
+	}
+
+	#SendButton {
+		visibility: visible;
+		position: absolute;
+		z-index: 24;
+		top: 75%;
+		left: 82.5%;
+		background: linear-gradient(45deg, #00cc00, #00ff00);
+		border: none;
+		border-radius: 50%;
+		width: 15%;
+		height: 15%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	#SendButton:hover {
+		transform: scale(1.1);
+		box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+	}
+
+	.round-button i {
+		color: #000;
+		font-size: clamp(14px, 1.8vw, 16px);
+		z-index: 25;
+	}
+
+	#ChatSelect {
+		visibility: visible;
+		z-index: 24;
+		top: 5%;
+		right: 5%;
+		background: rgba(255, 255, 255, 0.1);
+		border: 2px solid #00ff00;
+		border-radius: 8px;
+		color: #ffffff;
+		padding: 5px;
+	}
+
+	/* === Team Kills Bar === */
+	#RedVsBlueBarKills {
+		visibility: visible;
+		position: absolute;
+		z-index: 25;
+		top: 80%;
+		left: 40%;
+		width: 20%;
+		height: 8%;
+		background: rgba(225, 225, 225, 0.7);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	#RedKills {
+		visibility: visible;
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		background: linear-gradient(90deg, #ff3333, #cc0000);
+		transform-origin: left;
+		transition: transform 0.3s ease;
+	}
+
+	#BlueKills {
+		visibility: visible;
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 100%;
+		background: linear-gradient(90deg, #3333ff, #0000cc);
+		transform-origin: right;
+		transition: transform 0.3s ease;
+	}
+
+	#RedText {
+		z-index: 27;
+		position: absolute;
+		background: transparent;
+		top: 90%;
+		left: 40%;
+		height: 8%;
+		width: 10%;
+		text-align: center;
+		font-size: clamp(12px, 1.5vw, 14px);
+		color: #ff3333;
+		font-weight: 700;
+	}
+
+	#NumberForRedText {
+		position: absolute;
+		top: calc(87.5% + 4%);
+		left: 42.5%;
+		z-index: 28;
+		color: #ffffff;
+		font-size: clamp(12px, 1.5vw, 14px);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	#BlueText {
+		z-index: 27;
+		position: absolute;
+		background: transparent;
+		top: 90%;
+		left: 50%;
+		height: 8%;
+		width: 10%;
+		text-align: center;
+		font-size: clamp(12px, 1.5vw, 14px);
+		color: #3333ff;
+		font-weight: 700;
+	}
+
+	#NumberForBlueText {
+		position: absolute;
+		top: calc(87.5% + 4%);
+		left: 52.5%;
+		z-index: 28;
+		color: #ffffff;
+		font-size: clamp(12px, 1.5vw, 14px);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+	
+	#ArrowKeysButtons {
+		visibility: visible;
+		z-index: 31;
+		position: absolute;
+		width: 25%;
+		height: 35%;
+		top: 60%;
+		left: 5%;
+		background: rgba(0, 0, 0, 0.7);
+		border-radius: 15px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	}
+
+	#DownKeyButton, #UpKeyButton, #LeftKeyButton, #RightKeyButton {
+		visibility: visible;
+		z-index: 32;
+		position: absolute;
+		width: 25%;
+		height: 25%;
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 10px;
+		transition: background 0.2s ease;
+	}
+
+	#DownKeyButton:hover, #UpKeyButton:hover, #LeftKeyButton:hover, #RightKeyButton:hover {
+		background: rgba(255, 255, 255, 0.4);
+	}
+
+	#DownKeyButton {
+		top: 65%;
+		left: 37.5%;
+	}
+
+	#UpKeyButton {
+		top: 10%;
+		left: 37.5%;
+	}
+
+	#LeftKeyButton {
+		top: 37.5%;
+		left: 5%;
+	}
+
+	#RightKeyButton {
+		top: 37.5%;
+		left: 70%;
+	}
+
+	#somedivactions {
+		visibility: visible;
+		z-index: 33;
+		position: absolute;
+		width: 20%; /* Ensure this is relative to a properly sized parent */
+		min-width: 100px; /* Add a minimum width to prevent collapse */
+		height: 30%;
+		top: 55%;
+		right: 75%;
+		background: rgba(0, 0, 0, 0);
+		border-radius: 15px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	}
+
+	#DashButton {
+		visibility: visible;
+		z-index: 35;
+		position: absolute;
+		width: 9%; 
+		height: 20%;
+		top: 75%;
+		left: 83%;
+		background: linear-gradient(45deg, #00cc00, #00ff00);
+		border-radius: 50%; /* Use 50% for a perfect circle */
+		font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
+		display: flex; /* Center content */
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+
+	#DashButton:hover {
+		transform: scale(1.05);
+		box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+	}
+
+	#ShootButton {
+		visibility: visible;
+		z-index: 34;
+		position: absolute;
+		width: 9%; 
+		height: 20%; 
+		top: 55%;
+		left: 90%;
+		background: linear-gradient(45deg, #cc0000, #ff0000);
+		border-radius: 50%; /* Use 50% for a perfect circle */
+		font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
+		display: flex; /* Center content */
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+
+	#ShootButton:hover {
+		transform: scale(1.05);
+		box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+	}
+
+	#Joystick {
+		position: absolute;
+		z-index: 35;
+		width: 100%;
+		height: 100%;
+		top: 0%;
+		left: 0%;
+		background: rgba(225, 225, 225, 0.7);
+		border-radius: 15px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	}
+
+	#Stick {
+		position: absolute;
+		z-index: 36;
+		width: 30%;
+		height: 30%;
+		top: 40%;
+		left: 40%;
+		background: rgba(255, 255, 255, 0.3);
+		border-radius: 50%;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+		transition: transform 0.1s ease;
+	}
+
+	/* === Fullscreen Overlay === */
+	#fullscreenOverlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+		z-index: 9999;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: 2rem;
+	}
+
+	#fullscreenOverlay h2 {
+		margin-bottom: 2rem;
+		color: #ffffff;
+		font-size: clamp(20px, 3vw, 24px);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	#enterFullscreen {
+		padding: 1rem 2rem;
+		font-size: clamp(14px, 2.5vw, 16px);
+		background: linear-gradient(45deg, #00ff00, #33cc33);
+		color: #000;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	#enterFullscreen:hover {
+		transform: scale(1.05);
+		box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+	}
+
+	#noThanks {
+		color: #cccccc;
+		border: none;
+		background: none;
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: clamp(12px, 2vw, 14px);
+		transition: color 0.2s ease;
+	}
+
+	#noThanks:hover {
+		color: #ffffff;
+	}
+
+	/* === Respawn Overlay and Loader === */
+	#respawnOverlay, #LoadingOverlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.85);
+		display: none;
+		justify-content: center;
+		align-items: center;
+		z-index: 990;
+		animation: fadeIn 0.3s ease;
+	}
+
+	.container {
+		--uib-size: 50px;
+		--uib-color: #00ff00;
+		--uib-speed: 0.8s;
+		--uib-stroke: 4px;
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: var(--uib-size);
+		width: var(--uib-size);
+		z-index: 992;
+		filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.5));
+	}
+
+	.line {
+		position: absolute;
+		top: 0;
+		left: calc(50% - var(--uib-stroke) / 2);
+		display: flex;
+		align-items: flex-start;
+		height: 100%;
+		width: var(--uib-stroke);
+	}
+
+	.line::before {
+		content: '';
+		height: 25%;
+		width: 100%;
+		border-radius: calc(var(--uib-stroke) / 2);
+		background-color: var(--uib-color);
+		animation: pulse calc(var(--uib-speed)) ease-in-out infinite;
+		transition: background-color 0.3s ease;
+		transform-origin: center bottom;
+	}
+
+	.line:nth-child(1) { transform: rotate(calc(360deg / -12 * 1)); }
+	.line:nth-child(1)::before { animation-delay: calc(var(--uib-speed) / -12 * 1); }
+	.line:nth-child(2) { transform: rotate(calc(360deg / -12 * 2)); }
+	.line:nth-child(2)::before { animation-delay: calc(var(--uib-speed) / -12 * 2); }
+	.line:nth-child(3) { transform: rotate(calc(360deg / -12 * 3)); }
+	.line:nth-child(3)::before { animation-delay: calc(var(--uib-speed) / -12 * 3); }
+	.line:nth-child(4) { transform: rotate(calc(360deg / -12 * 4)); }
+	.line:nth-child(4)::before { animation-delay: calc(var(--uib-speed) / -12 * 4); }
+	.line:nth-child(5) { transform: rotate(calc(360deg / -12 * 5)); }
+	.line:nth-child(5)::before { animation-delay: calc(var(--uib-speed) / -12 * 5); }
+	.line:nth-child(6) { transform: rotate(calc(360deg / -12 * 6)); }
+	.line:nth-child(6)::before { animation-delay: calc(var(--uib-speed) / -12 * 6); }
+	.line:nth-child(7) { transform: rotate(calc(360deg / -12 * 7)); }
+	.line:nth-child(7)::before { animation-delay: calc(var(--uib-speed) / -12 * 7); }
+	.line:nth-child(8) { transform: rotate(calc(360deg / -12 * 8)); }
+	.line:nth-child(8)::before { animation-delay: calc(var(--uib-speed) / -12 * 8); }
+	.line:nth-child(9) { transform: rotate(calc(360deg / -12 * 9)); }
+	.line:nth-child(9)::before { animation-delay: calc(var(--uib-speed) / -12 * 9); }
+	.line:nth-child(10) { transform: rotate(calc(360deg / -12 * 10)); }
+	.line:nth-child(10)::before { animation-delay: calc(var(--uib-speed) / -12 * 10); }
+	.line:nth-child(11) { transform: rotate(calc(360deg / -12 * 11)); }
+	.line:nth-child(11)::before { animation-delay: calc(var(--uib-speed) / -12 * 11); }
+	.line:nth-child(12) { transform: rotate(calc(360deg / -12 * 12)); }
+	.line:nth-child(12)::before { animation-delay: calc(var(--uib-speed) / -12 * 12); }
+
+	@keyframes pulse {
+		0%, 80%, 100% {
+			transform: scaleY(0.75);
+			opacity: 0;
+		}
+		20% {
+			transform: scaleY(1.2);
+			opacity: 1;
+		}
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	#ElimedText {
+	  position: absolute;
+	  top: 90%;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  visibility: hidden;
+	  font-size: clamp(10px, 1.8vw, 2vw);
+	  font-family: 'Arial', sans-serif;
+	  font-weight: bold;
+	  z-index: 200;
+	}
+
+	#DisconnectedOverlay {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background-color: rgba(0, 0, 0, 0.4);
+	  z-index: 9999;
+	  display: none;
+	  justify-content: center;
+	  align-items: center;
+	}
+
+	#DisconnectedDialog {
+	  background-color: turquoise;
+	  width: 50%;
+	  height: 50%;
+	  position: relative;
+	  padding: 20px;
+	  box-sizing: border-box;
+	  text-align: center;
+	  border-radius: 8px;
+	}
+
+	#ReconnectButton {
+	  background-color: red;
+	  color: white;
+	  padding: 10px 20px;
+	  border: none;
+	  font-weight: bold;
+	  font-size: 16px;
+	  cursor: pointer;
+	  margin-top: 20px;
+	}
+
+	#ErrorMessage {
+	  display: none;
+	  color: red;
+	  margin-top: 15px;
+	  font-weight: bold;
+	}
 
   </style>
   
 </head>
 <body>
-<div id="DeathScreen" style="display: none; position: absolute; z-index: 50; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); color: white; flex-direction: column; align-items: center; justify-content: center;">
-  <h1 style="font-size: 5vw; margin: 0;">You Died</h1>
-  <h3 id="DeathCauseText" style="font-size: 2vw; margin-top: 1vh;">Eliminated by ???</h3>
-  <button id="RestartButton" style="display: flex; position: absolute; z-index: 55; width: 20%; height: 10%; top: 60%; right: 40%; background-color: rgba(255, 0, 0, 0.8); color: white; flex-direction: column; align-items: center; justify-content: center;">
-  Restart
-</button>
+	<div id="DeathScreen" style="display: none; position: absolute; z-index: 50; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); color: white; flex-direction: column; align-items: center; justify-content: center;">
+	  <h1 style="font-size: 5vw; margin: 0;">You Died</h1>
+	  <h3 id="DeathCauseText" style="font-size: 2vw; margin-top: 1vh;">Eliminated by ???</h3>
+	  <button id="RestartButton" style="display: flex; position: absolute; z-index: 55; width: 20%; height: 10%; top: 60%; right: 40%; background-color: rgba(255, 0, 0, 0.8); color: white; flex-direction: column; align-items: center; justify-content: center;">
+	  Restart
+	</button>
 
-</div>
+	</div>
       <div id="DeathScreen" style="display: none; position: absolute; z-index: 50; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); color: white; flex-direction: column; align-items: center; justify-content: center;">
             <h1 style="font-size: 5vw; margin: 0;">You Died</h1>
             <h3 id="DeathCauseText" style="font-size: 2vw; margin-top: 1vh;">Eliminated by ???</h3>
@@ -910,13 +994,22 @@ pointer-events: auto;
       </div>
   <div id="StartScreen">
     <div id="StartScreenLayout">
-      <h1>Cool Triangles Game IDK</h1>
-      <h4 id="DisplayNameText">Display Name:</h4>
+      <div style=" position: absolute;  top: 5%; left: 50%; transform: translateX(-50%); font-size: clamp(24px, 4vw, 64px); font-weight: bold; color: #ffffff; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px #00ffff; background: linear-gradient(90deg, #00ffcc, #00ffff, #00ccff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; ">Triangle Battle</div>
+
+      <div id="DisplayNameText">Display Name:</div>
       <input type="text" placeholder="Display Name Here" id="DisplayNameInput" />
       <button id="JoinButton">Join</button>
       <h5 id="ErrorMessage">
         No spaces allowed, and the name must be less than 10 characters long
       </h5>
+	  <div id="Socials" class="square">
+		<div id="TextForGithub">Check this game out on Github:</div>
+		<button id="GithubButton" aria-label="GitHub">
+			<svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+				<path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2 .37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.58.82-2.14-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.14 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0016 8c0-4.42-3.58-8-8-8z"/>
+			</svg>
+		</button>
+	  </div>
     </div>
   </div>
   
@@ -994,821 +1087,828 @@ pointer-events: auto;
 	<button type="button" id="ShootButton">Shoot</button>
 
 	<div id="respawnOverlay" class="black-overlay">
-    <div class="container">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-</div>
+		<div class="container">
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+		</div>
+	</div>
 
-<div id="LoadingOverlay" class="black-overlay">
-    <div class="container">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-</div>
+	<div id="LoadingOverlay" class="black-overlay">
+		<div class="container">
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+		</div>
+	</div>
 
-<div id="ElimedText"></div>
+	<div id="ElimedText"></div>
 
-<div id="DisconnectedOverlay">
-  <div id="DisconnectedDialog">
-    <h2>You have been disconnected from the Server, click reconnect to reconnect</h2>
-    <button id="ReconnectButton">Reconnect</button>
-    <div id="ErrorMessage">❌ Failed to connect. Error Code: <span id="ErrorCode">N/A</span></div>
-  </div>
-</div>
+	<div id="DisconnectedOverlay">
+	  <div id="DisconnectedDialog">
+		<h2>You have been disconnected from the Server, click reconnect to reconnect</h2>
+		<button id="ReconnectButton">Reconnect</button>
+		<div id="ErrorMessage">❌ Failed to connect. Error Code: <span id="ErrorCode">N/A</span></div>
+	  </div>
+	</div>
 
 
       
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r110/three.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-// === Game State ===
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r110/three.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	// === Game State ===
 
-const GameState = {
-	joystickInput: new THREE.Vector3(),
-    health: 100,
-    dashpower: 100,
-    isDashing: false,
-    dashStartTime: 0,
-    dashDuration: 1000,
-    dashDistance: 10,
-    dashCooldown: 1500,
-    lastDashTime: -1500,
-    dashDirection: new THREE.Vector3(),
-    dashClones: [],
-    dashRegenRate: 0.2,
-	healthRegenRate: 0.2,
-    dashProgress: 0,
-    dashInvulnerabilityTime: 200,
-    player: null,
-    scene: null,
-    camera: null,
-    renderer: null,
-    Playername: '',
-    gameStarted: false,
-    playerx: 0,
-    playery: 0,
-    bullets: [],
-    enemies: {},
-    currentKeys: { w: false, a: false, s: false, d: false },
-    gradientTiles: [],
-    tileSize: 50,
-    tilesPerRow: 5,
-    isDead: false,
-    lastSentAngle: null,
-    ismoving: false,
-    lastSentRotation: null,
-    mouseX: 0,
-    mouseY: 0,
-    maxBulletDistance: 100,
-    minBulletSpeed: 0.01,
-    wasMoving: false,
-    bulletSpeed: 5,
-    lastShotTime: 0,
-    shootCooldown: 200,
-    whatteam: 'null',
-    isTyping: false,
-    playerVelocity: new THREE.Vector3(),
-    moveAcceleration: 30.0,
-    friction: 0.9,
-    isDragging: false,
-    joystickRect: null,
-    stickRect: null,
-    joystickCenter: null,
-    maxRadius: null,
-    lastSentPos: { x: 0, y: 0 },
-    lastPositionUpdate: 0,
-    positionUpdateInterval: 100,
-    lastRegenTime: 0,
-	lastRegenTimeForHealth: 0,
-    lastMoveTime: performance.now(),
-    lastEmit: 0,
-    emitDelay: 1000 / 30,
-    targetZoom: 1.0,
-    zoomSpeed: 0.2,
-    redkills: 0,
-    bluekills: 0,
-    killerName: null,
-    activeTouches: new Map(),
-	milks: []
-};
-let playerKills = 0;
-let unreadmessages = 0;
-let closedchat = 'false';
-// === DOM Elements ===
-const DOMElements = {
-    leaderboardBox: document.getElementById('LeaderboardBox'),
-    fullscreenoverlay: document.getElementById('fullscreenOverlay'),
-	LoadingOverlay: document.getElementById('LoadingOverlay'),
-    enterFullscreenBtn: document.getElementById('enterFullscreen'),
-    noThanksBtn: document.getElementById('noThanks'),
-    errorMessage: document.getElementById('ErrorMessage'),
-    startScreen: document.getElementById('StartScreen'),
-    displayNameInput: document.getElementById('DisplayNameInput'),
-    joinButton: document.getElementById('JoinButton'),
-    gameContainer: document.getElementById('GameContainer'),
-	Chat: document.getElementById('Chat'),
-    ChatBox: document.getElementById('ChatBox'),
-	ChatTextBox: document.getElementById('ChatTextBox'),
-    ChatText: document.getElementById('ChatText'),
-	ChatAmount: document.getElementById('ChatAmount'),
-	ChatAmountText: document.getElementById('ChatAmountText'),
-    SendButton: document.getElementById('SendButton'),
-    Joystick: document.getElementById('Joystick'),
-    Stick: document.getElementById('Stick'),
-    DashButton: document.getElementById('DashButton'),
-	ShootButton: document.getElementById('ShootButton'),
-    barElement: document.getElementById('Dashpower'),
-	healthbarElement: document.getElementById('health'),
-    textElement: document.getElementById('DashPowerText'),
-	healthtextElement: document.getElementById('HealthText'),
-	CloseButton: document.getElementById('CloseButton'),
-};
+	const GameState = {
+		joystickInput: new THREE.Vector3(),
+		health: 100,
+		dashpower: 100,
+		isDashing: false,
+		dashStartTime: 0,
+		dashDuration: 1000,
+		dashDistance: 10,
+		dashCooldown: 1500,
+		lastDashTime: -1500,
+		dashDirection: new THREE.Vector3(),
+		dashClones: [],
+		dashRegenRate: 0.2,
+		healthRegenRate: 0.2,
+		dashProgress: 0,
+		dashInvulnerabilityTime: 200,
+		player: null,
+		scene: null,
+		camera: null,
+		renderer: null,
+		Playername: '',
+		gameStarted: false,
+		playerx: 0,
+		playery: 0,
+		bullets: [],
+		enemies: {},
+		currentKeys: { w: false, a: false, s: false, d: false },
+		gradientTiles: [],
+		tileSize: 50,
+		tilesPerRow: 5,
+		isDead: false,
+		lastSentAngle: null,
+		ismoving: false,
+		lastSentRotation: null,
+		mouseX: 0,
+		mouseY: 0,
+		maxBulletDistance: 100,
+		minBulletSpeed: 0.01,
+		wasMoving: false,
+		bulletSpeed: 5,
+		lastShotTime: 0,
+		shootCooldown: 200,
+		whatteam: 'null',
+		isTyping: false,
+		playerVelocity: new THREE.Vector3(),
+		moveAcceleration: 30.0,
+		friction: 0.9,
+		isDragging: false,
+		joystickRect: null,
+		stickRect: null,
+		joystickCenter: null,
+		maxRadius: null,
+		lastSentPos: { x: 0, y: 0 },
+		lastPositionUpdate: 0,
+		positionUpdateInterval: 100,
+		lastRegenTime: 0,
+		lastRegenTimeForHealth: 0,
+		lastMoveTime: performance.now(),
+		lastEmit: 0,
+		emitDelay: 1000 / 30,
+		targetZoom: 1.0,
+		zoomSpeed: 0.2,
+		redkills: 0,
+		bluekills: 0,
+		killerName: null,
+		activeTouches: new Map(),
+		milks: []
+	};
 
-// === Constants ===
-const Constants = {
-    ListSwear: ['arse', 'arsehead', 'arsehole', 'ass', 'asshole', 'bastard', 'bitch', 'bloody', 'bollocks', 'brotherfucker', 'bugger', 'bullshit', 'christonabike', 'christ', 'christonacracker', 'cock', 'crap', 'cunt', 'dick', 'dyke', 'fag', 'faggot', 'fuck', 'hell', 'shit', 'jesuschrist', 'kike', 'tranny', 'twat', 'wanker'],
-    baseWidth: 1920,
-    baseHeight: 1080
-};
+	let playerKills = 0;
+	let unreadmessages = 0;
+	let closedchat = 'false';
+	// === DOM Elements ===
+	const DOMElements = {
+		leaderboardBox: document.getElementById('LeaderboardBox'),
+		fullscreenoverlay: document.getElementById('fullscreenOverlay'),
+		LoadingOverlay: document.getElementById('LoadingOverlay'),
+		enterFullscreenBtn: document.getElementById('enterFullscreen'),
+		noThanksBtn: document.getElementById('noThanks'),
+		errorMessage: document.getElementById('ErrorMessage'),
+		startScreen: document.getElementById('StartScreen'),
+		displayNameInput: document.getElementById('DisplayNameInput'),
+		joinButton: document.getElementById('JoinButton'),
+		gameContainer: document.getElementById('GameContainer'),
+		Chat: document.getElementById('Chat'),
+		ChatBox: document.getElementById('ChatBox'),
+		ChatTextBox: document.getElementById('ChatTextBox'),
+		ChatText: document.getElementById('ChatText'),
+		ChatAmount: document.getElementById('ChatAmount'),
+		ChatAmountText: document.getElementById('ChatAmountText'),
+		SendButton: document.getElementById('SendButton'),
+		Joystick: document.getElementById('Joystick'),
+		Stick: document.getElementById('Stick'),
+		DashButton: document.getElementById('DashButton'),
+		ShootButton: document.getElementById('ShootButton'),
+		barElement: document.getElementById('Dashpower'),
+		healthbarElement: document.getElementById('health'),
+		textElement: document.getElementById('DashPowerText'),
+		healthtextElement: document.getElementById('HealthText'),
+		CloseButton: document.getElementById('CloseButton'),
+	};
 
-// === Socket Setup ===
-const socket = io();
+	// === Constants ===
+	const Constants = {
+		ListSwear: ['arse', 'arsehead', 'arsehole', 'ass', 'asshole', 'bastard', 'bitch', 'bloody', 'bollocks', 'brotherfucker', 'bugger', 'bullshit', 'christonabike', 'christ', 'christonacracker', 'cock', 'crap', 'cunt', 'dick', 'dyke', 'fag', 'faggot', 'fuck', 'hell', 'shit', 'jesuschrist', 'kike', 'tranny', 'twat', 'wanker'],
+		baseWidth: 1920,
+		baseHeight: 1080
+	};
 
-// === Initialization ===
-function initializeGame() {
-    // Fullscreen handling
-    DOMElements.enterFullscreenBtn.addEventListener('click', () => {
-        requestFullScreen();
-        DOMElements.fullscreenoverlay.style.display = 'none';
-		DOMElements.displayNameInput.focus();
-    });
-    DOMElements.noThanksBtn.addEventListener('click', () => {
-        DOMElements.fullscreenoverlay.style.display = 'none';
-		DOMElements.displayNameInput.focus();
-    });
+	// === Socket Setup ===
+	const socket = io();
 
-    // Join game handling
-    DOMElements.displayNameInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') handleJoin();
-    });
-    DOMElements.joinButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleJoin();
-    });
+	// === Initialization ===
+	function initializeGame() {
+		// Fullscreen handling
+		DOMElements.enterFullscreenBtn.addEventListener('click', () => {
+			requestFullScreen();
+			DOMElements.fullscreenoverlay.style.display = 'none';
+			DOMElements.displayNameInput.focus();
+		});
+		DOMElements.noThanksBtn.addEventListener('click', () => {
+			DOMElements.fullscreenoverlay.style.display = 'none';
+			DOMElements.displayNameInput.focus();
+		});
 
-    // Initialize socket and input listeners
-    initializeSocketListeners();
-    initializeInputHandlers();
-}
+		// Join game handling
+		DOMElements.displayNameInput.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter') handleJoin();
+		});
+		DOMElements.joinButton.addEventListener('click', (e) => {
+			e.stopPropagation();
+			handleJoin();
+		});
+		
+		document.getElementById('GithubButton').addEventListener('click', () => {
+			window.open('https://github.com/CloudStas/triangle-battle', '_blank', 'noopener');
+		});
 
-function requestFullScreen() {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-        elem.mozRequestFullScreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
-}
+		// Initialize socket and input listeners
+		initializeSocketListeners();
+		initializeInputHandlers();
+	}
 
-// === Game Setup ===
-function handleJoin() {
-    let inputValueRaw = DOMElements.displayNameInput.value.trim();
-    let inputValue = inputValueRaw.toLowerCase();
-
-    if (Constants.ListSwear.some(word => inputValue.includes(word))) {
-        showError('You really think you can name yourself a swear word, think again.');
-        return;
-    }
-
-    if (inputValueRaw.length > 0 && inputValueRaw.length < 11 && !/\s/.test(inputValueRaw)) {
-        DOMElements.LoadingOverlay.style.display = 'flex';
-
-        socket.emit("validateName", inputValueRaw);
-
-        socket.once("nameTaken", () => {
-            DOMElements.LoadingOverlay.style.display = 'none';
-            showError('Name Taken, Try a different name.');
-        });
-
-        socket.once("nameValidated", () => {
-            GameState.Playername = inputValueRaw;
-            DOMElements.startScreen.style.display = 'none';
-            DOMElements.errorMessage.style.visibility = 'hidden';
-            GameState.whatteam = Math.random() < 0.502 ? 'blue' : 'red';
-            console.log(GameState.whatteam);
-            DOMElements.LoadingOverlay.style.display = 'none';
-            startGame();
-        });
-
-    } else {
-        showError('No spaces allowed, and the name must be less than 10 characters long.');
-    }
-}
-
-function showError(message) {
-    DOMElements.errorMessage.style.visibility = 'visible';
-    DOMElements.errorMessage.innerHTML = message;
-    setTimeout(() => DOMElements.errorMessage.style.visibility = 'hidden', 2000);
-}
-
-
-function processPendingEnemies() {
-    if (!GameState.scene) {
-        console.log('Scene not ready, retrying pending enemies...');
-        setTimeout(processPendingEnemies, 100); // Retry every 100ms
-        return;
-    }
-    pendingEnemies.forEach(({ name, x, y, whatteam }) => {
-        if (!GameState.enemies[name]) {
-            console.log(`Processing buffered enemy: ${name}`);
-            const enemy = createNewEnemy(name, whatteam);
-            enemy.position.set(x, y, 0);
-            enemy.userData = {
-                targetPosition: new THREE.Vector3(x, y, 0),
-                velocity: new THREE.Vector3(0, 0, 0)
-            };
-            const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-            const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-            enemy.scale.set(sX, sY, 1);
-            GameState.enemies[name] = enemy;
-            GameState.scene.add(enemy);
-        }
-    });
-    pendingEnemies = []; // Clear after processing
-}
-
-function startGame() {
-    // Ensure Three.js is loaded
-    if (typeof THREE === 'undefined') {
-        console.error('Three.js is not loaded. Please ensure the Three.js script is included before the game script.');
-        return;
-    }
-
-    GameState.renderer = new THREE.WebGLRenderer({ canvas: DOMElements.gameContainer, antialias: true });
-    GameState.renderer.setPixelRatio(window.devicePixelRatio);
-    GameState.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    document.getElementById('PosText').style.visibility = 'visible';
-    document.getElementById('Healthbox').style.visibility = 'visible';
-
-    GameState.scene = new THREE.Scene();
-    GameState.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-    createGradientTiles();
-
-    const geometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
-    let material;
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    if (GameState.whatteam === 'red') {
-        material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide });
-    } else if (GameState.whatteam === 'blue') {
-        material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide });
-    } else {
-        material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-    }
-    GameState.player = new THREE.Mesh(geometry, material);
-    GameState.scene.add(GameState.player);
-
-    // Set initial position to (0,0) and wait for server to provide spawn position
-    GameState.player.position.set(0, 0, 0);
-
-    // Request spawn position from server
-    socket.emit('requestSpawnPosition', {
-        name: GameState.Playername,
-        whatteam: GameState.whatteam
-    });
-
-    // Listen for server-provided spawn position
-    socket.once('setSpawnPosition', ({ x, y }) => {
-        console.log(`Received spawn position from server: (${x}, ${y})`);
-        GameState.player.position.set(x, y, 0);
-        socket.emit('updatePosition', {
-            name: GameState.Playername,
-            position: { x: GameState.player.position.x, y: GameState.player.position.y },
-            rotation: GameState.player.rotation.z,
-            currentKeys: GameState.currentKeys
-        });
-    });
-
-    scalePlayer();
-    initializeJoystick();
-
-    // Process pending enemies
-    pendingEnemies.forEach(({ name, x, y, whatteam }) => {
-        if (!GameState.enemies[name]) {
-            const enemy = createNewEnemy(name, whatteam);
-            enemy.position.set(x, y, 0);
-            enemy.userData = {
-                targetPosition: new THREE.Vector3(x, y, 0),
-                velocity: new THREE.Vector3(0, 0, 0)
-            };
-            const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-            const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-            enemy.scale.set(sX, sY, 1);
-            GameState.enemies[name] = enemy;
-            GameState.scene.add(enemy);
-        }
-    });
-    pendingEnemies = []; // Clear the buffer
-
-    window.addEventListener('resize', () => {
-        GameState.renderer.setSize(window.innerWidth, window.innerHeight);
-        scalePlayer();
-    });
-
-    GameState.gameStarted = true;
-    processPendingEnemies();
-    animate();
-
-    if (typeof GameState.Playername !== 'undefined') {
-        socket.emit('newPlayer', GameState.Playername, GameState.whatteam);
-    } else {
-        console.error('Playername is undefined.');
-    }
-}
-
-// === Input Handling ===
-function initializeInputHandlers() {
-    // Keyboard
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('mousedown', (e) => {
-	
-		if (
-			e.target === DOMElements.CloseButton ||
-			e.target.closest('#CloseButton') ||
-			e.target === DOMElements.chatTextBox ||
-			e.target === DOMElements.SendButton ||
-			e.target === DOMElements.joinButton ||
-			e.target === DOMElements.enterFullscreenBtn ||
-			e.target === DOMElements.noThanksBtn ||
-			e.target === DOMElements.DashButton ||
-			e.target === DOMElements.ShootButton ||
-			e.target === document.getElementById('RestartButton')
-		) {
-			return; 
+	function requestFullScreen() {
+		const elem = document.documentElement;
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen();
+		} else if (elem.webkitRequestFullscreen) {
+			elem.webkitRequestFullscreen();
+		} else if (elem.mozRequestFullScreen) {
+			elem.mozRequestFullScreen();
+		} else if (elem.msRequestFullscreen) {
+			elem.msRequestFullscreen();
 		}
-        if (e.button === 0 && !GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
-            shoot();
-        }
-    });
-	// Stop movement when interacting with UI elements
-    const uiElements = [
-        DOMElements.joinButton,
-        DOMElements.enterFullscreenBtn,
-        DOMElements.noThanksBtn,
-        DOMElements.SendButton,
-        DOMElements.chatTextBox,
-        DOMElements.DashButton,
-        document.getElementById('RestartButton')
-    ];
+	}
 
-    uiElements.forEach(element => {
-        if (element) { // Ensure element exists
-            element.addEventListener('mousedown', stopMovement);
-            element.addEventListener('touchstart', (e) => {
-                epreventDefault(); // Prevent default touch behavior
-                stopMovement();
-            });
-        }
-    });
-	// Stop propagation and movement when clicking ChatTextBox
-    function preventDefaultActions(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  stopMovement();
-}
+	// === Game Setup ===
+	function handleJoin() {
+		let inputValueRaw = DOMElements.displayNameInput.value.trim();
+		let inputValue = inputValueRaw.toLowerCase();
 
-DOMElements.ChatTextBox.addEventListener('touchstart', (e) => {
-  console.log("Touchstart fired");
-  e.stopPropagation(); 
-  stopMovement(); 
-  DOMElements.ChatTextBox.focus(); 
-}, { passive: true }); 
+		if (Constants.ListSwear.some(word => inputValue.includes(word))) {
+			showError('You really think you can name yourself a swear word, think again.');
+			return;
+		}
 
-DOMElements.ChatTextBox.addEventListener('pointerdown', (e) => {
-  e.stopPropagation();
-  stopMovement();
-  DOMElements.ChatTextBox.focus();
-}, { passive: true });
+		if (inputValueRaw.length > 0 && inputValueRaw.length < 11 && !/\s/.test(inputValueRaw)) {
+			DOMElements.LoadingOverlay.style.display = 'flex';
 
-DOMElements.ChatTextBox.addEventListener('mousedown', (e) => {
-  e.stopPropagation();
-  stopMovement();
-  DOMElements.ChatTextBox.focus();
-});
+			socket.emit("validateName", inputValueRaw);
 
-	
-	// New function to stop movement
-function stopMovement() {
-    if (GameState.isDead || !GameState.gameStarted) return;
-    // Clear joystick input
-    GameState.joystickInput.set(0, 0, 0);
-    GameState.isDragging = false;
-    DOMElements.Stick.style.left = '40%';
-    DOMElements.Stick.style.top = '40%';
-    
-    // Clear keyboard inputs
-    GameState.currentKeys = { w: false, a: false, s: false, d: false };
-    GameState.activeTouches.clear();
-    
-    // Stop movement
-    GameState.ismoving = false;
-    GameState.playerVelocity.set(0, 0, 0);
-    zoomcamera();
-}
+			socket.once("nameTaken", () => {
+				DOMElements.LoadingOverlay.style.display = 'none';
+				showError('Name Taken, Try a different name.');
+			});
 
-    // Mouse (Desktop)
-	document.addEventListener("DOMContentLoaded", function () {
-    const deviceType = getDeviceTypeByUserAgent();
-    console.log("Device Type:", deviceType);
+			socket.once("nameValidated", () => {
+				GameState.Playername = inputValueRaw;
+				DOMElements.startScreen.style.display = 'none';
+				DOMElements.errorMessage.style.visibility = 'hidden';
+				GameState.whatteam = Math.random() < 0.502 ? 'blue' : 'red';
+				console.log(GameState.whatteam);
+				DOMElements.LoadingOverlay.style.display = 'none';
+				startGame();
+			});
 
-    if (deviceType === 'Desktop') {
-        // Desktop-specific logic
-        document.getElementById('somedivactions').style.display = 'none';
-		document.getElementById('DashButton').style.display = 'none';
-		document.getElementById('ShootButton').style.visibility = 'hidden';
-        document.getElementById('Chat').style.right = "2%";
-		document.getElementById('ChatAmount').style.right = "5%";
-        window.addEventListener('mousemove', (e) => {
-            const mouseX = e.clientX - window.innerWidth / 2;
-            const mouseY = -(e.clientY - window.innerHeight / 2);
+		} else {
+			showError('No spaces allowed, and the name must be less than 10 characters long.');
+		}
+	}
 
-            if (!GameState.player || GameState.isDead) return;
+	function showError(message) {
+		DOMElements.errorMessage.style.visibility = 'visible';
+		DOMElements.errorMessage.innerHTML = message;
+		setTimeout(() => DOMElements.errorMessage.style.visibility = 'hidden', 2000);
+	}
 
-            const newRotation = Math.atan2(mouseY, mouseX) - Math.PI / 2;
-            GameState.player.rotation.z = newRotation;
 
-            if (
-                GameState.lastSentRotation === null ||
-                Math.abs(newRotation - GameState.lastSentRotation) > 0.001
-            ) {
-                GameState.lastSentRotation = newRotation;
-                socket.emit('updateRotation', {
-                    name: GameState.Playername,
-                    rotation: newRotation
-                });
-            }
-        });
-    } else if (deviceType === 'Mobile' || deviceType === 'Tablet') {
-        // Mobile and Tablet-specific logic
-        document.getElementById('somedivactions').style.display = 'block';
-		document.getElementById('DashButton').style.display = 'block';
-		document.getElementById('ShootButton').style.visibility = 'visible';
-        document.getElementById('Chat').style.right = "17.5%";
-		document.getElementById('ChatAmount').style.right = "21%";
-    }
-});
-    // Joystick (Mobile)
-    DOMElements.Stick.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) return;
-        GameState.isDragging = true;
-        updateJoystickDimensions();
-    });
+	function processPendingEnemies() {
+		if (!GameState.scene) {
+			console.log('Scene not ready, retrying pending enemies...');
+			setTimeout(processPendingEnemies, 100); // Retry every 100ms
+			return;
+		}
+		pendingEnemies.forEach(({ name, x, y, whatteam }) => {
+			if (!GameState.enemies[name]) {
+				console.log(`Processing buffered enemy: ${name}`);
+				const enemy = createNewEnemy(name, whatteam);
+				enemy.position.set(x, y, 0);
+				enemy.userData = {
+					targetPosition: new THREE.Vector3(x, y, 0),
+					velocity: new THREE.Vector3(0, 0, 0)
+				};
+				const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+				const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+				enemy.scale.set(sX, sY, 1);
+				GameState.enemies[name] = enemy;
+				GameState.scene.add(enemy);
+			}
+		});
+		pendingEnemies = []; // Clear after processing
+	}
 
-    document.addEventListener('mousemove', (e) => {
-        if (GameState.isDragging) {
-            updateStickPosition(e.clientX, e.clientY);
-        }
-    });
+	function startGame() {
+		// Ensure Three.js is loaded
+		if (typeof THREE === 'undefined') {
+			console.error('Three.js is not loaded. Please ensure the Three.js script is included before the game script.');
+			return;
+		}
 
-    document.addEventListener('mouseup', () => {
-        if (GameState.isDragging) {
-            resetStick();
-        }
-    });
+		GameState.renderer = new THREE.WebGLRenderer({ canvas: DOMElements.gameContainer, antialias: true });
+		GameState.renderer.setPixelRatio(window.devicePixelRatio);
+		GameState.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    DOMElements.Stick.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) return;
-        GameState.isDragging = true;
-        updateJoystickDimensions();
-        const touch = e.touches[0];
-        updateStickPosition(touch.clientX, touch.clientY);
-    });
+		document.getElementById('PosText').style.visibility = 'visible';
+		document.getElementById('Healthbox').style.visibility = 'visible';
 
-    document.addEventListener('touchmove', (e) => {
-        if (GameState.isDragging) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            updateStickPosition(touch.clientX, touch.clientY);
-        }
-    });
+		GameState.scene = new THREE.Scene();
+		GameState.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    document.addEventListener('touchend', () => {
-        if (GameState.isDragging) {
-            resetStick();
-        }
-    });
+		createGradientTiles();
 
-    // Dash button
-    DOMElements.DashButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
-            dash();
-        }
-    });
+		const geometry = new THREE.BufferGeometry();
+		const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
+		let material;
+		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+		if (GameState.whatteam === 'red') {
+			material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide });
+		} else if (GameState.whatteam === 'blue') {
+			material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide });
+		} else {
+			material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+		}
+		GameState.player = new THREE.Mesh(geometry, material);
+		GameState.scene.add(GameState.player);
 
-    DOMElements.DashButton.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
-            dash();
-        }
-    });
-	
-	// Shoot button
-    DOMElements.ShootButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
-            shoot();
-        }
-    });
+		// Set initial position to (0,0) and wait for server to provide spawn position
+		GameState.player.position.set(0, 0, 0);
 
-    DOMElements.ShootButton.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
-            shoot();
-        }
-    });
+		// Request spawn position from server
+		socket.emit('requestSpawnPosition', {
+			name: GameState.Playername,
+			whatteam: GameState.whatteam
+		});
 
-    // Chat
-	
-	
+		// Listen for server-provided spawn position
+		socket.once('setSpawnPosition', ({ x, y }) => {
+			console.log(`Received spawn position from server: (${x}, ${y})`);
+			GameState.player.position.set(x, y, 0);
+			socket.emit('updatePosition', {
+				name: GameState.Playername,
+				position: { x: GameState.player.position.x, y: GameState.player.position.y },
+				rotation: GameState.player.rotation.z,
+				currentKeys: GameState.currentKeys
+			});
+		});
 
-DOMElements.CloseButton.addEventListener('click', (e) => {
-    e.preventDefault(); // Prevent default behavior
-    e.stopPropagation(); // Stop event from bubbling up
-    e.stopImmediatePropagation(); // Stop other listeners on the same element
+		scalePlayer();
+		initializeJoystick();
 
-    if (closedchat === 'false') {
-        closedchat = 'true';
-        DOMElements.Chat.style.visibility = "hidden";
-        DOMElements.ChatText.style.visibility = "hidden";
-        DOMElements.ChatBox.style.visibility = "hidden";
-        DOMElements.ChatTextBox.style.visibility = "hidden";
-        DOMElements.SendButton.style.visibility = "hidden";
-        DOMElements.CloseButton.style.visibility = "visible";
-		unreadmessages = 0;
-		DOMElements.ChatAmountText.innerHTML = unreadmessages;
-		DOMElements.ChatAmount.style.display = "none";
-    } else {
-        closedchat = 'false';
-        DOMElements.Chat.style.visibility = "visible";
-        DOMElements.ChatText.style.visibility = "visible";
-        DOMElements.ChatBox.style.visibility = "visible";
-        DOMElements.ChatTextBox.style.visibility = "visible";
-        DOMElements.SendButton.style.visibility = "visible";
-        DOMElements.CloseButton.style.visibility = "visible";
-		unreadmessages = 0;
-		DOMElements.ChatAmountText.innerHTML = unreadmessages;
-		DOMElements.ChatAmount.style.display = "none";
-    }
-});
+		// Process pending enemies
+		pendingEnemies.forEach(({ name, x, y, whatteam }) => {
+			if (!GameState.enemies[name]) {
+				const enemy = createNewEnemy(name, whatteam);
+				enemy.position.set(x, y, 0);
+				enemy.userData = {
+					targetPosition: new THREE.Vector3(x, y, 0),
+					velocity: new THREE.Vector3(0, 0, 0)
+				};
+				const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+				const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+				enemy.scale.set(sX, sY, 1);
+				GameState.enemies[name] = enemy;
+				GameState.scene.add(enemy);
+			}
+		});
+		pendingEnemies = []; // Clear the buffer
 
-// Handle icon click within CloseButton
-document.querySelector('#CloseButton i').addEventListener('click', (e) => {
-    e.preventDefault(); // Prevent default behavior
-    e.stopPropagation(); // Stop event from bubbling up
-    e.stopImmediatePropagation(); // Stop other listeners
+		window.addEventListener('resize', () => {
+			GameState.renderer.setSize(window.innerWidth, window.innerHeight);
+			scalePlayer();
+		});
 
-    // Trigger the CloseButton click
-    DOMElements.CloseButton.click();
-});
+		GameState.gameStarted = true;
+		processPendingEnemies();
+		animate();
 
-// Add touch event handling for CloseButton
-DOMElements.CloseButton.addEventListener('touchstart', (e) => {
-    e.preventDefault(); // Prevent default touch behavior
-    e.stopPropagation(); // Stop event from bubbling up
-    e.stopImmediatePropagation(); // Stop other listeners
+		if (typeof GameState.Playername !== 'undefined') {
+			socket.emit('newPlayer', GameState.Playername, GameState.whatteam);
+		} else {
+			console.error('Playername is undefined.');
+		}
+	}
 
-    if (closedchat === 'false') {
-        closedchat = 'true';
-        DOMElements.Chat.style.visibility = "hidden";
-        DOMElements.ChatText.style.visibility = "hidden";
-        DOMElements.ChatBox.style.visibility = "hidden";
-        DOMElements.ChatTextBox.style.visibility = "hidden";
-        DOMElements.SendButton.style.visibility = "hidden";
-        DOMElements.CloseButton.style.visibility = "visible";
-    } else {
-        closedchat = 'false';
-        DOMElements.Chat.style.visibility = "visible";
-        DOMElements.ChatText.style.visibility = "visible";
-        DOMElements.ChatBox.style.visibility = "visible";
-        DOMElements.ChatTextBox.style.visibility = "visible";
-        DOMElements.SendButton.style.visibility = "visible";
-        DOMElements.CloseButton.style.visibility = "visible";
-    }
-});
-	
-    DOMElements.SendButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        handleSendMessage();
-    });
+	// === Input Handling ===
+	function initializeInputHandlers() {
+		// Keyboard
+		document.addEventListener('keydown', onKeyDown);
+		document.addEventListener('keyup', onKeyUp);
+		document.addEventListener('mousedown', (e) => {
+		
+			if (
+				e.target === DOMElements.CloseButton ||
+				e.target.closest('#CloseButton') ||
+				e.target === DOMElements.chatTextBox ||
+				e.target === DOMElements.SendButton ||
+				e.target === DOMElements.joinButton ||
+				e.target === DOMElements.enterFullscreenBtn ||
+				e.target === DOMElements.noThanksBtn ||
+				e.target === DOMElements.DashButton ||
+				e.target === DOMElements.ShootButton ||
+				e.target === document.getElementById('RestartButton')
+			) {
+				return; 
+			}
+			if (e.button === 0 && !GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
+				shoot();
+			}
+		});
+		// Stop movement when interacting with UI elements
+		const uiElements = [
+			DOMElements.joinButton,
+			DOMElements.enterFullscreenBtn,
+			DOMElements.noThanksBtn,
+			DOMElements.SendButton,
+			DOMElements.chatTextBox,
+			DOMElements.DashButton,
+			document.getElementById('RestartButton')
+		];
 
-    DOMElements.ChatTextBox.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            handleSendMessage();
-        }
-    });
+		uiElements.forEach(element => {
+			if (element) { // Ensure element exists
+				element.addEventListener('mousedown', stopMovement);
+				element.addEventListener('touchstart', (e) => {
+					epreventDefault(); // Prevent default touch behavior
+					stopMovement();
+				});
+			}
+		});
+		// Stop propagation and movement when clicking ChatTextBox
+		function preventDefaultActions(e) {
+	  e.preventDefault();
+	  e.stopPropagation();
+	  stopMovement();
+	}
 
-    DOMElements.ChatTextBox.addEventListener('focus', () => {
-        GameState.isTyping = true;
-    });
+	DOMElements.ChatTextBox.addEventListener('touchstart', (e) => {
+	  console.log("Touchstart fired");
+	  e.stopPropagation(); 
+	  stopMovement(); 
+	  DOMElements.ChatTextBox.focus(); 
+	}, { passive: true }); 
 
-    DOMElements.ChatTextBox.addEventListener('blur', () => {
-        GameState.isTyping = false;
-    });
+	DOMElements.ChatTextBox.addEventListener('pointerdown', (e) => {
+	  e.stopPropagation();
+	  stopMovement();
+	  DOMElements.ChatTextBox.focus();
+	}, { passive: true });
 
-   
-
-    // Global touch listeners
-    document.addEventListener('touchend', (e) => {
-        for (let touch of e.changedTouches) {
-            if (GameState.activeTouches.has(touch.identifier)) {
-                GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
-                GameState.activeTouches.delete(touch.identifier);
-                updateMovementState();
-            }
-        }
-    });
-
-    document.addEventListener('touchcancel', (e) => {
-        for (let touch of e.changedTouches) {
-            if (GameState.activeTouches.has(touch.identifier)) {
-                GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
-                GameState.activeTouches.delete(touch.identifier);
-                updateMovementState();
-            }
-        }
-    });
-
-    // Restart button
-    document.getElementById('RestartButton').addEventListener('click', () => {
-		stopMovement(); // Reset movement state immediately
-		document.getElementById('respawnOverlay').style.display = 'flex';
-		socket.emit('respawnPlayer', { name: GameState.Playername });
+	DOMElements.ChatTextBox.addEventListener('mousedown', (e) => {
+	  e.stopPropagation();
+	  stopMovement();
+	  DOMElements.ChatTextBox.focus();
 	});
 
-    // Window unload
-    window.addEventListener('beforeunload', () => {
-        DOMElements.ChatTextBox.value = '';
-        socket.emit('PlayerDis', GameState.Playername, GameState.whatteam);
-    });
-	
-	
-}
-function stopMovement() {
-    if (GameState.isDead || !GameState.gameStarted) return;
-    // Clear joystick input
-    GameState.joystickInput.set(0, 0, 0);
-    GameState.isDragging = false;
-    DOMElements.Stick.style.left = '40%';
-    DOMElements.Stick.style.top = '40%';
-    
-    // Clear keyboard inputs
-    GameState.currentKeys = { w: false, a: false, s: false, d: false };
-    GameState.activeTouches.clear();
-    
-    // Stop movement
-    GameState.ismoving = false;
-    GameState.playerVelocity.set(0, 0, 0);
-    zoomcamera();
-}
-let pendingEnemies = [];
+		
+	// New function to stop movement
+	function stopMovement() {
+		if (GameState.isDead || !GameState.gameStarted) return;
+		// Clear joystick input
+		GameState.joystickInput.set(0, 0, 0);
+		GameState.isDragging = false;
+		DOMElements.Stick.style.left = '40%';
+		DOMElements.Stick.style.top = '40%';
+		
+		// Clear keyboard inputs
+		GameState.currentKeys = { w: false, a: false, s: false, d: false };
+		GameState.activeTouches.clear();
+		
+		// Stop movement
+		GameState.ismoving = false;
+		GameState.playerVelocity.set(0, 0, 0);
+		zoomcamera();
+	}
 
-// === Network Handling ===
-function initializeSocketListeners() {
-    socket.on('RemoveEnemy', (name) => {
-    console.log(`Attempting to remove enemy: ${name}`);
-    if (GameState.enemies[name]) {
-        GameState.scene.remove(GameState.enemies[name]);
-        delete GameState.enemies[name];
-        console.log(`Successfully removed enemy: ${name}`);
-    } else {
-        console.log(`Enemy ${name} not found for removal`);
-    }
-});
+		// Mouse (Desktop)
+		document.addEventListener("DOMContentLoaded", function () {
+		const deviceType = getDeviceTypeByUserAgent();
+		console.log("Device Type:", deviceType);
+
+		if (deviceType === 'Desktop') {
+			// Desktop-specific logic
+			document.getElementById('somedivactions').style.display = 'none';
+			document.getElementById('DashButton').style.display = 'none';
+			document.getElementById('ShootButton').style.visibility = 'hidden';
+			document.getElementById('Chat').style.right = "2%";
+			document.getElementById('ChatAmount').style.right = "5%";
+			window.addEventListener('mousemove', (e) => {
+				const mouseX = e.clientX - window.innerWidth / 2;
+				const mouseY = -(e.clientY - window.innerHeight / 2);
+
+				if (!GameState.player || GameState.isDead) return;
+
+				const newRotation = Math.atan2(mouseY, mouseX) - Math.PI / 2;
+				GameState.player.rotation.z = newRotation;
+
+				if (
+					GameState.lastSentRotation === null ||
+					Math.abs(newRotation - GameState.lastSentRotation) > 0.001
+				) {
+					GameState.lastSentRotation = newRotation;
+					socket.emit('updateRotation', {
+						name: GameState.Playername,
+						rotation: newRotation
+					});
+				}
+			});
+		} else if (deviceType === 'Mobile' || deviceType === 'Tablet') {
+			// Mobile and Tablet-specific logic
+			document.getElementById('somedivactions').style.display = 'block';
+			document.getElementById('DashButton').style.display = 'block';
+			document.getElementById('ShootButton').style.visibility = 'visible';
+			document.getElementById('Chat').style.right = "17.5%";
+			document.getElementById('ChatAmount').style.right = "21%";
+		}
+	});
+
+	// here
+		// Joystick (Mobile)
+		DOMElements.Stick.addEventListener('mousedown', (e) => {
+			e.preventDefault();
+			if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) return;
+			GameState.isDragging = true;
+			updateJoystickDimensions();
+		});
+
+		document.addEventListener('mousemove', (e) => {
+			if (GameState.isDragging) {
+				updateStickPosition(e.clientX, e.clientY);
+			}
+		});
+
+		document.addEventListener('mouseup', () => {
+			if (GameState.isDragging) {
+				resetStick();
+			}
+		});
+
+		DOMElements.Stick.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) return;
+			GameState.isDragging = true;
+			updateJoystickDimensions();
+			const touch = e.touches[0];
+			updateStickPosition(touch.clientX, touch.clientY);
+		});
+
+		document.addEventListener('touchmove', (e) => {
+			if (GameState.isDragging) {
+				e.preventDefault();
+				const touch = e.touches[0];
+				updateStickPosition(touch.clientX, touch.clientY);
+			}
+		});
+
+		document.addEventListener('touchend', () => {
+			if (GameState.isDragging) {
+				resetStick();
+			}
+		});
+
+		// Dash button
+		DOMElements.DashButton.addEventListener('click', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
+				dash();
+			}
+		});
+
+		DOMElements.DashButton.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
+				dash();
+			}
+		});
+		
+		// Shoot button
+		DOMElements.ShootButton.addEventListener('click', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
+				shoot();
+			}
+		});
+
+		DOMElements.ShootButton.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			if (!GameState.isTyping && !GameState.isDead && GameState.gameStarted && GameState.player) {
+				shoot();
+			}
+		});
+
+		// Chat
+		
+		
+
+	DOMElements.CloseButton.addEventListener('click', (e) => {
+		e.preventDefault(); // Prevent default behavior
+		e.stopPropagation(); // Stop event from bubbling up
+		e.stopImmediatePropagation(); // Stop other listeners on the same element
+
+		if (closedchat === 'false') {
+			closedchat = 'true';
+			DOMElements.Chat.style.visibility = "hidden";
+			DOMElements.ChatText.style.visibility = "hidden";
+			DOMElements.ChatBox.style.visibility = "hidden";
+			DOMElements.ChatTextBox.style.visibility = "hidden";
+			DOMElements.SendButton.style.visibility = "hidden";
+			DOMElements.CloseButton.style.visibility = "visible";
+			unreadmessages = 0;
+			DOMElements.ChatAmountText.innerHTML = unreadmessages;
+			DOMElements.ChatAmount.style.display = "none";
+		} else {
+			closedchat = 'false';
+			DOMElements.Chat.style.visibility = "visible";
+			DOMElements.ChatText.style.visibility = "visible";
+			DOMElements.ChatBox.style.visibility = "visible";
+			DOMElements.ChatTextBox.style.visibility = "visible";
+			DOMElements.SendButton.style.visibility = "visible";
+			DOMElements.CloseButton.style.visibility = "visible";
+			unreadmessages = 0;
+			DOMElements.ChatAmountText.innerHTML = unreadmessages;
+			DOMElements.ChatAmount.style.display = "none";
+		}
+	});
+
+	// Handle icon click within CloseButton
+	document.querySelector('#CloseButton i').addEventListener('click', (e) => {
+		e.preventDefault(); // Prevent default behavior
+		e.stopPropagation(); // Stop event from bubbling up
+		e.stopImmediatePropagation(); // Stop other listeners
+
+		// Trigger the CloseButton click
+		DOMElements.CloseButton.click();
+	});
+
+	// Add touch event handling for CloseButton
+	DOMElements.CloseButton.addEventListener('touchstart', (e) => {
+		e.preventDefault(); // Prevent default touch behavior
+		e.stopPropagation(); // Stop event from bubbling up
+		e.stopImmediatePropagation(); // Stop other listeners
+
+		if (closedchat === 'false') {
+			closedchat = 'true';
+			DOMElements.Chat.style.visibility = "hidden";
+			DOMElements.ChatText.style.visibility = "hidden";
+			DOMElements.ChatBox.style.visibility = "hidden";
+			DOMElements.ChatTextBox.style.visibility = "hidden";
+			DOMElements.SendButton.style.visibility = "hidden";
+			DOMElements.CloseButton.style.visibility = "visible";
+		} else {
+			closedchat = 'false';
+			DOMElements.Chat.style.visibility = "visible";
+			DOMElements.ChatText.style.visibility = "visible";
+			DOMElements.ChatBox.style.visibility = "visible";
+			DOMElements.ChatTextBox.style.visibility = "visible";
+			DOMElements.SendButton.style.visibility = "visible";
+			DOMElements.CloseButton.style.visibility = "visible";
+		}
+	});
+		
+		DOMElements.SendButton.addEventListener('click', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			handleSendMessage();
+		});
+
+		DOMElements.ChatTextBox.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault();
+				handleSendMessage();
+			}
+		});
+
+		DOMElements.ChatTextBox.addEventListener('focus', () => {
+			GameState.isTyping = true;
+		});
+
+		DOMElements.ChatTextBox.addEventListener('blur', () => {
+			GameState.isTyping = false;
+		});
+
+	   
+
+		// Global touch listeners
+		document.addEventListener('touchend', (e) => {
+			for (let touch of e.changedTouches) {
+				if (GameState.activeTouches.has(touch.identifier)) {
+					GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
+					GameState.activeTouches.delete(touch.identifier);
+					updateMovementState();
+				}
+			}
+		});
+
+		document.addEventListener('touchcancel', (e) => {
+			for (let touch of e.changedTouches) {
+				if (GameState.activeTouches.has(touch.identifier)) {
+					GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
+					GameState.activeTouches.delete(touch.identifier);
+					updateMovementState();
+				}
+			}
+		});
+
+		// Restart button
+		document.getElementById('RestartButton').addEventListener('click', () => {
+			stopMovement(); // Reset movement state immediately
+			document.getElementById('respawnOverlay').style.display = 'flex';
+			socket.emit('respawnPlayer', { name: GameState.Playername });
+		});
+
+		// Window unload
+		window.addEventListener('beforeunload', () => {
+			DOMElements.ChatTextBox.value = '';
+			socket.emit('PlayerDis', GameState.Playername, GameState.whatteam);
+		});
+		
+		
+	}
+	function stopMovement() {
+		if (GameState.isDead || !GameState.gameStarted) return;
+		// Clear joystick input
+		GameState.joystickInput.set(0, 0, 0);
+		GameState.isDragging = false;
+		DOMElements.Stick.style.left = '40%';
+		DOMElements.Stick.style.top = '40%';
+		
+		// Clear keyboard inputs
+		GameState.currentKeys = { w: false, a: false, s: false, d: false };
+		GameState.activeTouches.clear();
+		
+		// Stop movement
+		GameState.ismoving = false;
+		GameState.playerVelocity.set(0, 0, 0);
+		zoomcamera();
+	}
+	let pendingEnemies = [];
+
+	// === Network Handling ===
+	function initializeSocketListeners() {
+		socket.on('RemoveEnemy', (name) => {
+			console.log(`Attempting to remove enemy: ${name}`);
+			if (GameState.enemies[name]) {
+				GameState.scene.remove(GameState.enemies[name]);
+				delete GameState.enemies[name];
+				console.log(`Successfully removed enemy: ${name}`);
+			} else {
+			console.log(`Enemy ${name} not found for removal`);
+		}
+	});
 
     socket.on('CreateEnemy', ({ name, x, y, whatteam }) => {
-    try {
-        if (!GameState.scene) {
-            console.log(`Buffering enemy ${name} due to unready scene`);
-            pendingEnemies.push({ name, x, y, whatteam });
-            processPendingEnemies();
-            return;
-        }
-        if (!GameState.enemies[name]) {
-            const enemy = createNewEnemy(name, whatteam);
-            enemy.position.set(x, y, 0);
-            enemy.userData = {
-                targetPosition: new THREE.Vector3(x, y, 0),
-                velocity: new THREE.Vector3(0, 0, 0)
-            };
-            const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-            const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-            enemy.scale.set(sX, sY, 1);
-            GameState.enemies[name] = enemy;
-            GameState.scene.add(enemy);
-            console.log(`Added enemy ${name} at (${x}, ${y}) with scale (${sX}, ${sY})`);
-            // Verify visibility
-            const cameraBox = new THREE.Box3().setFromObject(GameState.camera);
-            const enemyBox = new THREE.Box3().setFromObject(enemy);
-            if (!cameraBox.intersectsBox(enemyBox)) {
-                console.warn(`Enemy ${name} may be outside camera view`);
-            }
-        }
-    } catch (error) {
-        console.error(`Error creating enemy ${name}:`, error);
-    }
-});
+		try {
+			if (!GameState.scene) {
+				console.log(`Buffering enemy ${name} due to unready scene`);
+				pendingEnemies.push({ name, x, y, whatteam });
+				processPendingEnemies();
+				return;
+			}
+			if (!GameState.enemies[name]) {
+				const enemy = createNewEnemy(name, whatteam);
+				enemy.position.set(x, y, 0);
+				enemy.userData = {
+					targetPosition: new THREE.Vector3(x, y, 0),
+					velocity: new THREE.Vector3(0, 0, 0)
+				};
+				const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+				const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+				enemy.scale.set(sX, sY, 1);
+				GameState.enemies[name] = enemy;
+				GameState.scene.add(enemy);
+				console.log(`Added enemy ${name} at (${x}, ${y}) with scale (${sX}, ${sY})`);
+				// Verify visibility
+				const cameraBox = new THREE.Box3().setFromObject(GameState.camera);
+				const enemyBox = new THREE.Box3().setFromObject(enemy);
+				if (!cameraBox.intersectsBox(enemyBox)) {
+					console.warn(`Enemy ${name} may be outside camera view`);
+				}
+			}
+		} catch (error) {
+			console.error(`Error creating enemy ${name}:`, error);
+		}
+	});
 
-function createNameLabel(text) {
-    console.log('createNameLabel defined'); // Debug log to confirm definition
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = 300;
-    canvas.height = 100;
+	function createNameLabel(text) {
+		console.log('createNameLabel defined'); // Debug log to confirm definition
+		const canvas = document.createElement('canvas');
+		const context = canvas.getContext('2d');
+		canvas.width = 300;
+		canvas.height = 100;
 
-    context.font = 'Bold 32px Arial';
-    context.fillStyle = 'white';
-    context.textAlign = 'center';
-    context.fillText(text, canvas.width / 2, canvas.height / 2);
+		context.font = 'Bold 32px Arial';
+		context.fillStyle = 'white';
+		context.textAlign = 'center';
+		context.fillText(text, canvas.width / 2, canvas.height / 2);
 
-    const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-    const sprite = new THREE.Sprite(material);
+		const texture = new THREE.CanvasTexture(canvas);
+		const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+		const sprite = new THREE.Sprite(material);
 
-    sprite.scale.set(3, 1.5, 1);
-    return sprite;
-}
+		sprite.scale.set(3, 1.5, 1);
+		return sprite;
+	}
 
 
     socket.on('ExistingEnemies', (players) => {
-    players.forEach((p) => {
-        if (!GameState.scene) {
-            console.log(`Scene not ready, buffering existing enemy: ${p.name}`);
-            pendingEnemies.push({
-                name: p.name,
-                x: p.position?.x || 0,
-                y: p.position?.y || 0,
-                whatteam: p.whatteam
-            });
-            return;
-        }
-        if (!GameState.enemies[p.name]) {
-            const enemy = createNewEnemy(p.name, p.whatteam);
-            GameState.scene.add(enemy);
+		players.forEach((p) => {
+			if (!GameState.scene) {
+				console.log(`Scene not ready, buffering existing enemy: ${p.name}`);
+				pendingEnemies.push({
+					name: p.name,
+					x: p.position?.x || 0,
+					y: p.position?.y || 0,
+					whatteam: p.whatteam
+				});
+				return;
+			}
+			if (!GameState.enemies[p.name]) {
+				const enemy = createNewEnemy(p.name, p.whatteam);
+				GameState.scene.add(enemy);
 
-            const posX = p.position?.x || 0;
-            const posY = p.position?.y || 0;
-            enemy.position.set(posX, posY, 0);
+				const posX = p.position?.x || 0;
+				const posY = p.position?.y || 0;
+				enemy.position.set(posX, posY, 0);
 
-            enemy.userData = {
-                targetPosition: new THREE.Vector3(posX, posY, 0),
-                velocity: new THREE.Vector3(0, 0, 0)
-            };
+				enemy.userData = {
+					targetPosition: new THREE.Vector3(posX, posY, 0),
+					velocity: new THREE.Vector3(0, 0, 0)
+				};
 
-            const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-            const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-            enemy.scale.set(sX, sY, 1);
+				const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+				const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+				enemy.scale.set(sX, sY, 1);
 
-            GameState.enemies[p.name] = enemy;
-        }
-    });
-});
+				GameState.enemies[p.name] = enemy;
+			}
+		});
+	});
 
     socket.on('enemyPositionUpdate', (data) => {
         if (data.name === GameState.Playername) return;
@@ -1848,125 +1948,126 @@ function createNameLabel(text) {
 	});
 
     socket.on('applyDamage', ({ amount, killer }) => {
-    console.log(`Received applyDamage: amount=${amount}, killer=${killer}, health before=${GameState.health}`);
-    if (GameState.isDashing && performance.now() - GameState.dashStartTime < GameState.dashInvulnerabilityTime) {
-        console.log('Damage ignored due to dash invulnerability');
-        return;
-    }
-    GameState.health = Math.max(0, GameState.health - amount);
-    console.log(`Health after: ${GameState.health}`);
-    if (GameState.health <= 0 && !GameState.isDead) {
-        GameState.isDead = true;
-        GameState.killerName = killer;
-        stopMovement(); // Reset movement state
-        const deathScreen = document.getElementById('DeathScreen');
-        deathScreen.style.display = 'flex';
-        document.getElementById('DeathCauseText').textContent = `Eliminated by ${GameState.killerName}`;
-        document.getElementById('RestartButton').style.display = 'flex';
-        document.getElementById('respawnOverlay').style.display = 'none'; // Initialize as hidden
-    }name
-});
+		console.log(`Received applyDamage: amount=${amount}, killer=${killer}, health before=${GameState.health}`);
+		if (GameState.isDashing && performance.now() - GameState.dashStartTime < GameState.dashInvulnerabilityTime) {
+			console.log('Damage ignored due to dash invulnerability');
+			return;
+		}
+		GameState.health = Math.max(0, GameState.health - amount);
+		console.log(`Health after: ${GameState.health}`);
+		if (GameState.health <= 0 && !GameState.isDead) {
+			GameState.isDead = true;
+			GameState.killerName = killer;
+			stopMovement(); // Reset movement state
+			const deathScreen = document.getElementById('DeathScreen');
+			deathScreen.style.display = 'flex';
+			document.getElementById('DeathCauseText').textContent = `Eliminated by ${GameState.killerName}`;
+			document.getElementById('RestartButton').style.display = 'flex';
+			document.getElementById('respawnOverlay').style.display = 'none'; // Initialize as hidden
+		}
+	});
 
-function showpersonkilled(name) {
-    try {
-        if (!name || typeof name !== 'string') {
-            console.error("Invalid name parameter:", name);
-            return;
-        }
-        const elimedText = document.getElementById("ElimedText");
-        if (!elimedText) {
-            console.error("ElimedText element not found in DOM");
-            return;
-        }
-        console.log(`Showing elimination message for ${name}`);
-        elimedText.innerHTML = `
-            <span style="color: white;">You </span>
-            <span style="color: red;">Eliminated </span>
-            <span style="color: white;">${name}</span>
-        `;
-        elimedText.style.visibility = "visible";
-        elimedText.style.top = "80%";
-        setTimeout(() => {
-            elimedText.style.visibility = "hidden";
-            elimedText.style.top = "90%";
-            console.log(`Hiding elimination message for ${name}`);
-        }, 3000); // Increased for testing
-    } catch (error) {
-        console.error("Error in showpersonkilled:", error);
-    }
-}
+	function showpersonkilled(name) {
+		try {
+			if (!name || typeof name !== 'string') {
+				console.error("Invalid name parameter:", name);
+				return;
+			}
+			const elimedText = document.getElementById("ElimedText");
+			if (!elimedText) {
+				console.error("ElimedText element not found in DOM");
+				return;
+			}
+			console.log(`Showing elimination message for ${name}`);
+			elimedText.innerHTML = `
+				<span style="color: white;">You </span>
+				<span style="color: red;">Eliminated </span>
+				<span style="color: white;">${name}</span>
+			`;
+			elimedText.style.visibility = "visible";
+			elimedText.style.top = "80%";
+			setTimeout(() => {
+				elimedText.style.visibility = "hidden";
+				elimedText.style.top = "90%";
+				console.log(`Hiding elimination message for ${name}`);
+			}, 3000); 
+		} catch (error) {
+			console.error("Error in showpersonkilled:", error);
+		}
+	}
 
-socket.on('playerDied', ({ name, killer }) => {
-    console.log(`playerDied event received: name=${name}, killer=${killer}, Playername=${GameState.Playername}`);
-    if (name === GameState.Playername) {
-        GameState.isDead = true;
-        GameState.killerName = killer;
-        stopMovement();
-        const deathScreen = document.getElementById('DeathScreen');
-        deathScreen.style.display = 'flex';
-        document.getElementById('DeathCauseText').textContent = `Eliminated by ${GameState.killerName}`;
-        document.getElementById('RestartButton').style.display = 'flex';
-        document.getElementById('respawnOverlay').style.display = 'none';
-    } else if (killer && killer.trim().toLowerCase() === GameState.Playername.trim().toLowerCase()) {
-        console.log(`You killed ${name}`);
-        playerkills += 1;
-        showpersonkilled(name);
-    }
-});
+	socket.on('playerDied', ({ name, killer }) => {
+		console.log(`playerDied event received: name=${name}, killer=${killer}, Playername=${GameState.Playername}`);
+		if (name === GameState.Playername) {
+			GameState.isDead = true;
+			GameState.killerName = killer;
+			stopMovement();
+			const deathScreen = document.getElementById('DeathScreen');
+			deathScreen.style.display = 'flex';
+			document.getElementById('DeathCauseText').textContent = `Eliminated by ${GameState.killerName}`;
+			document.getElementById('RestartButton').style.display = 'flex';
+			document.getElementById('respawnOverlay').style.display = 'none';
+		} else if (killer && killer.trim().toLowerCase() === GameState.Playername.trim().toLowerCase()) {
+			console.log(`You killed ${name}`);
+			playerkills += 1;
+			showpersonkilled(name);
+		}
+	});
 
 
     socket.on('playerRespawn', ({ name, position, whatteam }) => {
-    try {
-        console.log(`Respawn: ${name} at ${position.x}, ${position.y}`);
-        if (name === GameState.Playername) {
-            setTimeout(() => {
-                GameState.health = 100;
-                GameState.isDead = false;
-                GameState.player.position.set(position.x, position.y, 0);
-                stopMovement();
-                document.getElementById('DeathScreen').style.display = 'none';
-                document.getElementById('RestartButton').style.display = 'none';
-                document.getElementById('respawnOverlay').style.display = 'none';
-                updateHealthUI();
-            }, 1000);
-        } else {
-            if (!GameState.scene) {
-                console.log(`Scene not ready, buffering respawn for: ${name}`);
-                pendingEnemies.push({ name, x: position.x, y: position.y, whatteam });
-                return;
-            }
-            if (!GameState.enemies[name]) {
-                console.log(`Creating enemy ${name} on respawn`);
-                const enemy = createNewEnemy(name, whatteam);
-                enemy.position.set(position.x, position.y, 0);
-                enemy.userData = {
-                    targetPosition: new THREE.Vector3(position.x, position.y, 0),
-                    velocity: new THREE.Vector3(0, 0, 0)
-                };
-                const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-                const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-                enemy.scale.set(sX, sY, 1);
-                GameState.enemies[name] = enemy;
-                GameState.scene.add(enemy);
-            } else {
-                const enemy = GameState.enemies[name];
-                enemy.position.set(position.x, position.y, 0);
-                enemy.userData.targetPosition.set(position.x, position.y, 0);
-                let hasNameLabel = false;
-                enemy.traverse((child) => {
-                    if (child.isSprite) hasNameLabel = true;
-                });
-                if (!hasNameLabel) {
-                    const nameLabel = createNameLabel(name);
-                    nameLabel.position.set(0, -0.2, 0);
-                    enemy.add(nameLabel);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error in playerRespawn:', error);
-    }
-});
+		try {
+			console.log(`Respawn: ${name} at ${position.x}, ${position.y}`);
+			if (name === GameState.Playername) {
+				setTimeout(() => {
+					GameState.health = 100;
+					GameState.isDead = false;
+					GameState.player.position.set(position.x, position.y, 0);
+					stopMovement();
+					document.getElementById('DeathScreen').style.display = 'none';
+					document.getElementById('RestartButton').style.display = 'none';
+					document.getElementById('respawnOverlay').style.display = 'none';
+					updateHealthUI();
+				}, 1000);
+			} else {
+				if (!GameState.scene) {
+					console.log(`Scene not ready, buffering respawn for: ${name}`);
+					pendingEnemies.push({ name, x: position.x, y: position.y, whatteam });
+					return;
+				}
+				if (!GameState.enemies[name]) {
+					console.log(`Creating enemy ${name} on respawn`);
+					const enemy = createNewEnemy(name, whatteam);
+					enemy.position.set(position.x, position.y, 0);
+					enemy.userData = {
+						targetPosition: new THREE.Vector3(position.x, position.y, 0),
+						velocity: new THREE.Vector3(0, 0, 0)
+					};
+					const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+					const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+					enemy.scale.set(sX, sY, 1);
+					GameState.enemies[name] = enemy;
+					GameState.scene.add(enemy);
+				} else {
+					const enemy = GameState.enemies[name];
+					enemy.position.set(position.x, position.y, 0);
+					enemy.userData.targetPosition.set(position.x, position.y, 0);
+					let hasNameLabel = false;
+					enemy.traverse((child) => {
+						if (child.isSprite) hasNameLabel = true;
+					});
+					if (!hasNameLabel) {
+						const nameLabel = createNameLabel(name);
+						nameLabel.position.set(0, -0.2, 0);
+						enemy.add(nameLabel);
+					}
+				}
+			}
+		} catch (error) {
+			console.error('Error in playerRespawn:', error);
+		}
+	});
+	
     socket.on('updateLeaderboard', (players) => {
         DOMElements.leaderboardBox.innerHTML = '';
         players.sort((a, b) => b.elims - a.elims);
@@ -2010,11 +2111,7 @@ socket.on('playerDied', ({ name, killer }) => {
 			DOMElements.ChatAmountText.innerHTML = unreadmessages;
 		}
 	});
-
 	
-
-
-
     socket.on('RedKills', (count) => {
         GameState.redkills = count;
         document.getElementById('NumberForRedText').innerHTML = count + ' Kills';
@@ -2028,844 +2125,844 @@ socket.on('playerDied', ({ name, killer }) => {
     });
 
     socket.on('playDash', ({ direction, position, name }) => {
-        if (name !== GameState.Playername && GameState.enemies[name]) {
-            const enemy = GameState.enemies[name];
-            const forward = new THREE.Vector3(direction.x, direction.y, 0).normalize();
-            const back = forward.clone().negate();
-            const right = new THREE.Vector3(-forward.y, forward.x, 0);
-            const backOffset = 0.6;
-            const spread = 0.5;
-
-            const backOrigin = new THREE.Vector3(position.x, position.y, 0).add(back.clone().multiplyScalar(backOffset));
-
-            const clonePositions = [
-                backOrigin.clone().add(right.clone().multiplyScalar(-2 * spread)),
-                backOrigin.clone().add(right.clone().multiplyScalar(-spread)),
-                backOrigin.clone(),
-                backOrigin.clone().add(right.clone().multiplyScalar(spread)),
-                backOrigin.clone().add(right.clone().multiplyScalar(2 * spread))
-            ];
-
-            for (const pos of clonePositions) {
-                const clone = createDashClone(enemy.material.color.getHex());
-                clone.position.copy(pos);
-                clone.userData = {
-                    direction: forward.clone().negate(),
-                    distance: 0
-                };
-                GameState.dashClones.push(clone);
-                GameState.scene.add(clone);
-            }
-        }
-    });
-}
-
-// === Game Logic ===
-function handleMovement() {
-    if (!GameState.player || GameState.isDead || !GameState.gameStarted) return;
-
-    const now = performance.now();
-    let deltaTime = (now - GameState.lastMoveTime) / 1000;
-    GameState.lastMoveTime = now;
-
-    deltaTime = Math.min(deltaTime, 0.05);
-
-    // Combine keyboard and joystick input
-    let dx = 0, dy = 0;
-    if (GameState.currentKeys.w) dy += 1;
-    if (GameState.currentKeys.s) dy -= 1;
-    if (GameState.currentKeys.a) dx -= 1;
-    if (GameState.currentKeys.d) dx += 1;
-
-    const keyboardInput = new THREE.Vector3(dx, dy, 0);
-    const inputVector = GameState.joystickInput.length() > 0 ? GameState.joystickInput : keyboardInput;
-
-    if (inputVector.length() > 0) {
-        inputVector.normalize().multiplyScalar(GameState.moveAcceleration * deltaTime);
-        GameState.playerVelocity.add(inputVector);
-        GameState.ismoving = true;
-    } else if (!isPlayerMoving() && GameState.joystickInput.length() === 0) {
-        GameState.ismoving = false;
-    }
-
-    if (GameState.isDashing) {
-        GameState.dashProgress += deltaTime / (GameState.dashDuration / 1000);
-        if (GameState.dashProgress >= 1) {
-            GameState.isDashing = false;
-            GameState.dashProgress = 1;
-        }
-        const easeOut = 1 - Math.pow(1 - GameState.dashProgress, 2);
-        const dashSpeed = GameState.dashDistance * easeOut;
-        const dashMovement = GameState.dashDirection.clone().multiplyScalar(dashSpeed * deltaTime);
-        GameState.player.position.add(dashMovement);
-
-        socket.emit('updatePosition', {
-            name: GameState.Playername,
-            position: { x: GameState.player.position.x, y: GameState.player.position.y },
-            rotation: GameState.player.rotation.z,
-            currentKeys: GameState.currentKeys
-        });
-    }
-
-    const maxSpeed = 4;
-    if (GameState.playerVelocity.length() > maxSpeed) {
-        GameState.playerVelocity.setLength(maxSpeed);
-    }
-
-    const frictionFactor = Math.pow(GameState.friction, deltaTime * 60);
-    GameState.playerVelocity.multiplyScalar(frictionFactor);
-
-    const movement = GameState.playerVelocity.clone().multiplyScalar(deltaTime);
-    GameState.player.position.add(movement);
-}
-
-function getVolumeByDistance(sourcePos, playerPos, maxDistance = 50) {
-    const distance = Math.sqrt(
-        Math.pow(sourcePos.x - playerPos.x, 2) + Math.pow(sourcePos.y - playerPos.y, 2)
-    );
-    // Volume decreases linearly from 1 (at distance 0) to 0 (at maxDistance)
-    const volume = Math.max(0, 1 - distance / maxDistance);
-    return volume;
-}
-
-function shoot() {
-    const now = Date.now();
-    if (now - GameState.lastShotTime < GameState.shootCooldown) return;
-    GameState.lastShotTime = now;
-
-    const angle = GameState.player.rotation.z;
-    const dirVector = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-    const offset = dirVector.clone();
-
-    const scaleX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-    const scaleY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-    offset.multiply(new THREE.Vector3(scaleX, scaleY, 1));
-
-    const bullet = {
-        mesh: createBulletMesh(),
-        direction: dirVector,
-        distanceTraveled: 0,
-        owner: GameState.Playername,
-        id: generateBulletID()
-    };
-
-    bullet.mesh.position.copy(GameState.player.position).add(offset);
-    bullet.mesh.rotation.z = angle - 190;
-    GameState.scene.add(bullet.mesh);
-    GameState.bullets.push(bullet);
-
-    socket.emit('shoot', {
-        id: bullet.id,
-        owner: GameState.Playername,
-        position: {
-            x: bullet.mesh.position.x,
-            y: bullet.mesh.position.y,
-            z: 0
-        },
-        direction: {
-            x: bullet.direction.x,
-            y: bullet.direction.y,
-            z: 0
-        }
-    });
-
-    // Play shoot sound with full volume (since player is the source)
-    const ShootSound = new Audio('/shoot.mp3');
-    ShootSound.volume = 1.0; // Player's own shot is always full volume
-    ShootSound.play();
-
-    // Particle effects (unchanged)
-    const particleMaterial = new THREE.PointsMaterial({
-        color: 0xffaa00,
-        size: 0.5,
-        transparent: true,
-        opacity: 0.8
-    });
-
-    const particles = new THREE.BufferGeometry();
-    const positions = [];
-
-    const spawnPosition = bullet.mesh.position.clone().add(dirVector.clone().multiplyScalar(0.5));
-    for (let i = 0; i < 10; i++) {
-        const pX = spawnPosition.x + (Math.random() - 0.5) * 0.5;
-        const pY = spawnPosition.y + (Math.random() - 0.5) * 0.5;
-        const pZ = spawnPosition.z + (Math.random() - 0.5) * 0.5;
-        positions.push(pX, pY, pZ);
-    }
-
-    particles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    GameState.scene.add(particleSystem);
-
-    setTimeout(() => {
-        GameState.scene.remove(particleSystem);
-    }, 300);
-}
-
-function dash() {
-    if (GameState.dashpower < 20 || Date.now() - GameState.lastDashTime < GameState.dashCooldown) return;
-    GameState.dashpower -= 20;
-
-    const dashSound = new Audio('/dash.mp3');
-    dashSound.play();
-
-    if (DOMElements.barElement && DOMElements.textElement && !isNaN(GameState.dashpower)) {
-        DOMElements.barElement.style.width = `${GameState.dashpower}%`;
-        DOMElements.textElement.textContent = `${Math.trunc(GameState.dashpower)}`;
-    }
-
-    GameState.lastDashTime = Date.now();
-    GameState.isDashing = true;
-    GameState.dashStartTime = performance.now();
-    GameState.dashProgress = 0;
-
-    GameState.dashDirection.set(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), GameState.player.rotation.z);
-
-    spawnDashClones();
-
-    socket.emit('dash', {
-        name: GameState.Playername,
-        direction: { x: GameState.dashDirection.x, y: GameState.dashDirection.y },
-        position: { x: GameState.player.position.x, y: GameState.player.position.y }
-    });
-}
-
-
-function updateBullets() {
-    const toKeep = [];
-    const deltaTime = 1 / 60;
-
-    for (const bullet of GameState.bullets) {
-        if (!bullet.hitTargets) bullet.hitTargets = new Set();
-
-        const movement = bullet.direction.clone().multiplyScalar(GameState.bulletSpeed * deltaTime);
-        bullet.mesh.position.add(movement);
-        bullet.distanceTraveled += movement.length();
-
-        const bulletBox = new THREE.Box3().setFromObject(bullet.mesh);
-
-        if (bullet.owner !== GameState.Playername && GameState.player && !GameState.isDead && !bullet.hitTargets.has(GameState.Playername)) {
-            const playerBox = new THREE.Box3().setFromObject(GameState.player);
-            if (bulletBox.intersectsBox(playerBox)) {
-                socket.emit('damagePlayer', {
-                    target: GameState.Playername,
-                    amount: 10,
-                    from: bullet.owner
-                });
-                bullet.hitTargets.add(GameState.Playername);
-                GameState.scene.remove(bullet.mesh);
-                continue;
-            }
-        }
-
-        for (const name in GameState.enemies) {
-            if (bullet.owner !== name && !bullet.hitTargets.has(name)) {
-                const enemy = GameState.enemies[name];
-                const enemyBox = new THREE.Box3().setFromObject(enemy);
-                if (bulletBox.intersectsBox(enemyBox)) {
-                    console.log(`Bullet ${bullet.id} from ${bullet.owner} hit enemy ${name}`);
-                    socket.emit('damagePlayer', {
-                        target: name,
-                        amount: 10,
-                        from: bullet.owner
-                    });
-                    bullet.hitTargets.add(name);
-                    GameState.scene.remove(bullet.mesh);
-                    continue;
-                }
-            }
-        }
-
-        if (bullet.distanceTraveled < GameState.maxBulletDistance) {
-            toKeep.push(bullet);
-        } else {
-            GameState.scene.remove(bullet.mesh);
-        }
-    }
-
-    GameState.bullets = toKeep;
-}
-
-function emitPositionIfChanged() {
-    if (!GameState.player || GameState.isDead) return;
-
-    const now = Date.now();
-    if (now - GameState.lastPositionUpdate >= GameState.positionUpdateInterval) {
-        const x = GameState.player.position.x;
-        const y = GameState.player.position.y;
-
-        const hasMoved = Math.abs(x - GameState.lastSentPos.x) > 0.01 || Math.abs(y - GameState.lastSentPos.y) > 0.01;
-        const shouldEmit = hasMoved && (isPlayerMoving() || GameState.isDashing);
-
-        if (shouldEmit) {
-            socket.emit('updatePosition', {
-                name: GameState.Playername,
-                position: { x, y },
-                rotation: GameState.player.rotation.z,
-                currentKeys: GameState.currentKeys
-            });
-            GameState.lastSentPos = { x, y };
-            GameState.lastPositionUpdate = now;
-        }
-    }
-}
-
-function smoothEnemyMovement() {
-    const maxSpeed = 0.5;
-    const snapThreshold = 0.5;
-
-    for (const name in GameState.enemies) {
-        const enemy = GameState.enemies[name];
-        console.log(`Enemy ${name} position: ${enemy.position.x}, ${enemy.position.y}, ${enemy.position.z}`); // Debug log
-        if (!enemy.userData || !enemy.userData.targetPosition || !enemy.userData.velocity) continue;
-
-        const target = enemy.userData.targetPosition;
-        const velocity = enemy.userData.velocity;
-
-        const toTarget = new THREE.Vector3().subVectors(target, enemy.position);
-        const distance = toTarget.length();
-
-        if (distance > snapThreshold) {
-            toTarget.normalize().multiplyScalar(GameState.moveAcceleration);
-            velocity.add(toTarget);
-            if (velocity.length() > maxSpeed) {
-                velocity.setLength(maxSpeed);
-            }
-            velocity.multiplyScalar(GameState.friction);
-            enemy.position.add(velocity);
-        } else {
-            enemy.position.copy(target);
-            velocity.set(0, 0, 0);
-        }
-    }
-}
-
-// === Rendering ===
-function animate() {
-    requestAnimationFrame(animate);
-
-    if (!GameState.player || !GameState.scene || !GameState.camera) {
-        console.warn('Cannot render: player, scene, or camera not initialized');
-        return;
-    }
-
-    const now = Date.now();
-
-    // Handle player and enemy movement
-    handleMovement();
-    smoothEnemyMovement();
-
-    // Update player position display
-    GameState.playerx = Math.trunc(GameState.player.position.x);
-    GameState.playery = Math.trunc(GameState.player.position.y);
-    document.getElementById('PosText').textContent = `Pos: X: ${GameState.playerx} Y: ${GameState.playery}`;
-
-    // Regenerate dash power
-    if (now - GameState.lastRegenTime > 100) {
-        GameState.dashpower = Math.min(100, GameState.dashpower + GameState.dashRegenRate);
-        GameState.lastRegenTime = now;
-    }
-
-    // Regenerate health
-    if (now - GameState.lastRegenTimeForHealth > 100 && !GameState.isDead) {
-        GameState.health = Math.min(100, GameState.health + GameState.healthRegenRate);
-        GameState.lastRegenTimeForHealth = now;
-    }
-
-    // Update dash power UI
-    if (DOMElements.barElement && DOMElements.textElement && !isNaN(GameState.dashpower)) {
-        const dashPower = Math.max(0, Math.min(100, GameState.dashpower));
-        DOMElements.barElement.style.width = `${dashPower}%`;
-        DOMElements.textElement.textContent = `${Math.trunc(dashPower)}`;
-    }
-
-    // Update health UI
-    if (DOMElements.healthbarElement && DOMElements.healthtextElement && !isNaN(GameState.health)) {
-        const healthlevel = Math.max(0, min(100, GameState.health));
-        DOMElements.healthbarElement.style.width = `${healthlevel}%`;
-        DOMElements.healthtextElement.textContent = `${Math.trunc(GameState.health)}`;
-    }
-
-    // Update camera position and view
-    GameState.camera.position.set(GameState.player.position.x, GameState.player.position.y, 5);
-    GameState.camera.lookAt(GameState.player.position);
-
-    // Update game systems
-    updateCameraZoom();
-    updateGradientTiles();
-    updateHealthUI();
-    updateBullets();
-    emitPositionIfChanged();
-    updateDashClones();
-
-    // Handle dash state expiration
-    if (GameState.isDashing && performance.now() - GameState.dashStartTime > GameState.dashDuration) {
-        GameState.isDashing = false;
-        GameState.dashProgress = 0;
-    }
-
-    // Render the scene
-    GameState.renderer.render(GameState.scene, GameState.camera);
-}
-function updateCameraZoom() {
-    if (!GameState.camera) return;
-
-    const zoomDiff = GameState.targetZoom - GameState.camera.zoom;
-    if (Math.abs(zoomDiff) > 0.001) {
-        GameState.camera.zoom += zoomDiff * GameState.zoomSpeed;
-        GameState.camera.updateProjectionMatrix();
-    }
-}
-
-function updateGradientTiles() {
-    const offsetX = Math.floor(GameState.player.position.x / GameState.tileSize);
-    const offsetY = Math.floor(GameState.player.position.y / GameState.tileSize);
-    let index = 0;
-    for (let x = -GameState.tilesPerRow; x <= GameState.tilesPerRow; x++) {
-        for (let y = -GameState.tilesPerRow; y <= GameState.tilesPerRow; y++) {
-            const tile = GameState.gradientTiles[index++];
-            tile.position.x = (x + offsetX) * GameState.tileSize;
-            tile.position.y = (y + offsetY) * GameState.tileSize;
-        }
-    }
-}
-
-function updateHealthUI() {
-    if (!GameState) return;
-
-    const health = Math.max(0, Math.min(GameState.health, 100));
-    const dash = Math.max(0, Math.min(GameState.dash, 100));
-
-    // Update health text and bar width
-    const healthBar = document.getElementById('Health');
-    document.getElementById('HealthText').innerText = Math.trunc(health);
-    healthBar.style.width = `${health}%`;
-
-    if (health > 50) {
-		healthBar.style.background = 'linear-gradient(90deg, #00FF00, #33cc33)'; // Green gradient
-	} else if (health > 20) {
-		healthBar.style.background = 'linear-gradient(90deg, #FFFF00, #FFCC00)'; // Yellow gradient
-	} else {
-		healthBar.style.background = 'linear-gradient(90deg, #FF0000, #CC0000)'; // Red gradient
+		if (name !== GameState.Playername && GameState.enemies[name]) {
+				const enemy = GameState.enemies[name];
+				const forward = new THREE.Vector3(direction.x, direction.y, 0).normalize();
+				const back = forward.clone().negate();
+				const right = new THREE.Vector3(-forward.y, forward.x, 0);
+				const backOffset = 0.6;
+				const spread = 0.5;
+
+				const backOrigin = new THREE.Vector3(position.x, position.y, 0).add(back.clone().multiplyScalar(backOffset));
+
+				const clonePositions = [
+					backOrigin.clone().add(right.clone().multiplyScalar(-2 * spread)),
+					backOrigin.clone().add(right.clone().multiplyScalar(-spread)),
+					backOrigin.clone(),
+					backOrigin.clone().add(right.clone().multiplyScalar(spread)),
+					backOrigin.clone().add(right.clone().multiplyScalar(2 * spread))
+				];
+
+				for (const pos of clonePositions) {
+					const clone = createDashClone(enemy.material.color.getHex());
+					clone.position.copy(pos);
+					clone.userData = {
+						direction: forward.clone().negate(),
+						distance: 0
+					};
+					GameState.dashClones.push(clone);
+					GameState.scene.add(clone);
+				}
+			}
+		});
+	}
+
+	// === Game Logic ===
+	function handleMovement() {
+		if (!GameState.player || GameState.isDead || !GameState.gameStarted) return;
+
+		const now = performance.now();
+		let deltaTime = (now - GameState.lastMoveTime) / 1000;
+		GameState.lastMoveTime = now;
+
+		deltaTime = Math.min(deltaTime, 0.05);
+
+		// Combine keyboard and joystick input
+		let dx = 0, dy = 0;
+		if (GameState.currentKeys.w) dy += 1;
+		if (GameState.currentKeys.s) dy -= 1;
+		if (GameState.currentKeys.a) dx -= 1;
+		if (GameState.currentKeys.d) dx += 1;
+
+		const keyboardInput = new THREE.Vector3(dx, dy, 0);
+		const inputVector = GameState.joystickInput.length() > 0 ? GameState.joystickInput : keyboardInput;
+
+		if (inputVector.length() > 0) {
+			inputVector.normalize().multiplyScalar(GameState.moveAcceleration * deltaTime);
+			GameState.playerVelocity.add(inputVector);
+			GameState.ismoving = true;
+		} else if (!isPlayerMoving() && GameState.joystickInput.length() === 0) {
+			GameState.ismoving = false;
+		}
+
+		if (GameState.isDashing) {
+			GameState.dashProgress += deltaTime / (GameState.dashDuration / 1000);
+			if (GameState.dashProgress >= 1) {
+				GameState.isDashing = false;
+				GameState.dashProgress = 1;
+			}
+			const easeOut = 1 - Math.pow(1 - GameState.dashProgress, 2);
+			const dashSpeed = GameState.dashDistance * easeOut;
+			const dashMovement = GameState.dashDirection.clone().multiplyScalar(dashSpeed * deltaTime);
+			GameState.player.position.add(dashMovement);
+
+			socket.emit('updatePosition', {
+				name: GameState.Playername,
+				position: { x: GameState.player.position.x, y: GameState.player.position.y },
+				rotation: GameState.player.rotation.z,
+				currentKeys: GameState.currentKeys
+			});
+		}
+
+		const maxSpeed = 4;
+		if (GameState.playerVelocity.length() > maxSpeed) {
+			GameState.playerVelocity.setLength(maxSpeed);
+		}
+
+		const frictionFactor = Math.pow(GameState.friction, deltaTime * 60);
+		GameState.playerVelocity.multiplyScalar(frictionFactor);
+
+		const movement = GameState.playerVelocity.clone().multiplyScalar(deltaTime);
+		GameState.player.position.add(movement);
+	}
+
+	function getVolumeByDistance(sourcePos, playerPos, maxDistance = 50) {
+		const distance = Math.sqrt(
+			Math.pow(sourcePos.x - playerPos.x, 2) + Math.pow(sourcePos.y - playerPos.y, 2)
+		);
+		
+		const volume = Math.max(0, 1 - distance / maxDistance);
+		return volume;
+	}
+
+	function shoot() {
+		const now = Date.now();
+		if (now - GameState.lastShotTime < GameState.shootCooldown) return;
+		GameState.lastShotTime = now;
+
+		const angle = GameState.player.rotation.z;
+		const dirVector = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+		const offset = dirVector.clone();
+
+		const scaleX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+		const scaleY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+		offset.multiply(new THREE.Vector3(scaleX, scaleY, 1));
+
+		const bullet = {
+			mesh: createBulletMesh(),
+			direction: dirVector,
+			distanceTraveled: 0,
+			owner: GameState.Playername,
+			id: generateBulletID()
+		};
+
+		bullet.mesh.position.copy(GameState.player.position).add(offset);
+		bullet.mesh.rotation.z = angle - 190;
+		GameState.scene.add(bullet.mesh);
+		GameState.bullets.push(bullet);
+
+		socket.emit('shoot', {
+			id: bullet.id,
+			owner: GameState.Playername,
+			position: {
+				x: bullet.mesh.position.x,
+				y: bullet.mesh.position.y,
+				z: 0
+			},
+			direction: {
+				x: bullet.direction.x,
+				y: bullet.direction.y,
+				z: 0
+			}
+		});
+
+		// Play shoot sound with full volume (since player is the source)
+		const ShootSound = new Audio('/shoot.mp3');
+		ShootSound.volume = 1.0; // Player's own shot is always full volume
+		ShootSound.play();
+
+		// Particle effects (unchanged)
+		const particleMaterial = new THREE.PointsMaterial({
+			color: 0xffaa00,
+			size: 0.5,
+			transparent: true,
+			opacity: 0.8
+		});
+
+		const particles = new THREE.BufferGeometry();
+		const positions = [];
+
+		const spawnPosition = bullet.mesh.position.clone().add(dirVector.clone().multiplyScalar(0.5));
+		for (let i = 0; i < 10; i++) {
+			const pX = spawnPosition.x + (Math.random() - 0.5) * 0.5;
+			const pY = spawnPosition.y + (Math.random() - 0.5) * 0.5;
+			const pZ = spawnPosition.z + (Math.random() - 0.5) * 0.5;
+			positions.push(pX, pY, pZ);
+		}
+
+		particles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+		const particleSystem = new THREE.Points(particles, particleMaterial);
+		GameState.scene.add(particleSystem);
+
+		setTimeout(() => {
+			GameState.scene.remove(particleSystem);
+		}, 300);
+	}
+
+	function dash() {
+		if (GameState.dashpower < 20 || Date.now() - GameState.lastDashTime < GameState.dashCooldown) return;
+		GameState.dashpower -= 20;
+
+		const dashSound = new Audio('/dash.mp3');
+		dashSound.play();
+
+		if (DOMElements.barElement && DOMElements.textElement && !isNaN(GameState.dashpower)) {
+			DOMElements.barElement.style.width = `${GameState.dashpower}%`;
+			DOMElements.textElement.textContent = `${Math.trunc(GameState.dashpower)}`;
+		}
+
+		GameState.lastDashTime = Date.now();
+		GameState.isDashing = true;
+		GameState.dashStartTime = performance.now();
+		GameState.dashProgress = 0;
+
+		GameState.dashDirection.set(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), GameState.player.rotation.z);
+
+		spawnDashClones();
+
+		socket.emit('dash', {
+			name: GameState.Playername,
+			direction: { x: GameState.dashDirection.x, y: GameState.dashDirection.y },
+			position: { x: GameState.player.position.x, y: GameState.player.position.y }
+		});
 	}
 
 
-    // Update dash bar
-    document.getElementById('Dashpower').style.width = `${dash}%`;
-}
+	function updateBullets() {
+		const toKeep = [];
+		const deltaTime = 1 / 60;
+
+		for (const bullet of GameState.bullets) {
+			if (!bullet.hitTargets) bullet.hitTargets = new Set();
+
+			const movement = bullet.direction.clone().multiplyScalar(GameState.bulletSpeed * deltaTime);
+			bullet.mesh.position.add(movement);
+			bullet.distanceTraveled += movement.length();
+
+			const bulletBox = new THREE.Box3().setFromObject(bullet.mesh);
+
+			if (bullet.owner !== GameState.Playername && GameState.player && !GameState.isDead && !bullet.hitTargets.has(GameState.Playername)) {
+				const playerBox = new THREE.Box3().setFromObject(GameState.player);
+				if (bulletBox.intersectsBox(playerBox)) {
+					socket.emit('damagePlayer', {
+						target: GameState.Playername,
+						amount: 10,
+						from: bullet.owner
+					});
+					bullet.hitTargets.add(GameState.Playername);
+					GameState.scene.remove(bullet.mesh);
+					continue;
+				}
+			}
+
+			for (const name in GameState.enemies) {
+				if (bullet.owner !== name && !bullet.hitTargets.has(name)) {
+					const enemy = GameState.enemies[name];
+					const enemyBox = new THREE.Box3().setFromObject(enemy);
+					if (bulletBox.intersectsBox(enemyBox)) {
+						console.log(`Bullet ${bullet.id} from ${bullet.owner} hit enemy ${name}`);
+						socket.emit('damagePlayer', {
+							target: name,
+							amount: 10,
+							from: bullet.owner
+						});
+						bullet.hitTargets.add(name);
+						GameState.scene.remove(bullet.mesh);
+						continue;
+					}
+				}
+			}
+
+			if (bullet.distanceTraveled < GameState.maxBulletDistance) {
+				toKeep.push(bullet);
+			} else {
+				GameState.scene.remove(bullet.mesh);
+			}
+		}
+
+		GameState.bullets = toKeep;
+	}
+
+	function emitPositionIfChanged() {
+		if (!GameState.player || GameState.isDead) return;
+
+		const now = Date.now();
+		if (now - GameState.lastPositionUpdate >= GameState.positionUpdateInterval) {
+			const x = GameState.player.position.x;
+			const y = GameState.player.position.y;
+
+			const hasMoved = Math.abs(x - GameState.lastSentPos.x) > 0.01 || Math.abs(y - GameState.lastSentPos.y) > 0.01;
+			const shouldEmit = hasMoved && (isPlayerMoving() || GameState.isDashing);
+
+			if (shouldEmit) {
+				socket.emit('updatePosition', {
+					name: GameState.Playername,
+					position: { x, y },
+					rotation: GameState.player.rotation.z,
+					currentKeys: GameState.currentKeys
+				});
+				GameState.lastSentPos = { x, y };
+				GameState.lastPositionUpdate = now;
+			}
+		}
+	}
+
+	function smoothEnemyMovement() {
+		const maxSpeed = 0.5;
+		const snapThreshold = 0.5;
+
+		for (const name in GameState.enemies) {
+			const enemy = GameState.enemies[name];
+			console.log(`Enemy ${name} position: ${enemy.position.x}, ${enemy.position.y}, ${enemy.position.z}`); // Debug log
+			if (!enemy.userData || !enemy.userData.targetPosition || !enemy.userData.velocity) continue;
+
+			const target = enemy.userData.targetPosition;
+			const velocity = enemy.userData.velocity;
+
+			const toTarget = new THREE.Vector3().subVectors(target, enemy.position);
+			const distance = toTarget.length();
+
+			if (distance > snapThreshold) {
+				toTarget.normalize().multiplyScalar(GameState.moveAcceleration);
+				velocity.add(toTarget);
+				if (velocity.length() > maxSpeed) {
+					velocity.setLength(maxSpeed);
+				}
+				velocity.multiplyScalar(GameState.friction);
+				enemy.position.add(velocity);
+			} else {
+				enemy.position.copy(target);
+				velocity.set(0, 0, 0);
+			}
+		}
+	}
+
+	// === Rendering ===
+	function animate() {
+		requestAnimationFrame(animate);
+
+		if (!GameState.player || !GameState.scene || !GameState.camera) {
+			console.warn('Cannot render: player, scene, or camera not initialized');
+			return;
+		}
+
+		const now = Date.now();
+
+		// Handle player and enemy movement
+		handleMovement();
+		smoothEnemyMovement();
+
+		// Update player position display
+		GameState.playerx = Math.trunc(GameState.player.position.x);
+		GameState.playery = Math.trunc(GameState.player.position.y);
+		document.getElementById('PosText').textContent = `Pos: X: ${GameState.playerx} Y: ${GameState.playery}`;
+
+		// Regenerate dash power
+		if (now - GameState.lastRegenTime > 100) {
+			GameState.dashpower = Math.min(100, GameState.dashpower + GameState.dashRegenRate);
+			GameState.lastRegenTime = now;
+		}
+
+		// Regenerate health
+		if (now - GameState.lastRegenTimeForHealth > 100 && !GameState.isDead) {
+			GameState.health = Math.min(100, GameState.health + GameState.healthRegenRate);
+			GameState.lastRegenTimeForHealth = now;
+		}
+
+		// Update dash power UI
+		if (DOMElements.barElement && DOMElements.textElement && !isNaN(GameState.dashpower)) {
+			const dashPower = Math.max(0, Math.min(100, GameState.dashpower));
+			DOMElements.barElement.style.width = `${dashPower}%`;
+			DOMElements.textElement.textContent = `${Math.trunc(dashPower)}`;
+		}
+
+		// Update health UI
+		if (DOMElements.healthbarElement && DOMElements.healthtextElement && !isNaN(GameState.health)) {
+			const healthlevel = Math.max(0, min(100, GameState.health));
+			DOMElements.healthbarElement.style.width = `${healthlevel}%`;
+			DOMElements.healthtextElement.textContent = `${Math.trunc(GameState.health)}`;
+		}
+
+		// Update camera position and view
+		GameState.camera.position.set(GameState.player.position.x, GameState.player.position.y, 5);
+		GameState.camera.lookAt(GameState.player.position);
+
+		// Update game systems
+		updateCameraZoom();
+		updateGradientTiles();
+		updateHealthUI();
+		updateBullets();
+		emitPositionIfChanged();
+		updateDashClones();
+
+		// Handle dash state expiration
+		if (GameState.isDashing && performance.now() - GameState.dashStartTime > GameState.dashDuration) {
+			GameState.isDashing = false;
+			GameState.dashProgress = 0;
+		}
+
+		// Render the scene
+		GameState.renderer.render(GameState.scene, GameState.camera);
+	}
+
+	function updateCameraZoom() {
+		if (!GameState.camera) return;
+
+		const zoomDiff = GameState.targetZoom - GameState.camera.zoom;
+		if (Math.abs(zoomDiff) > 0.001) {
+			GameState.camera.zoom += zoomDiff * GameState.zoomSpeed;
+			GameState.camera.updateProjectionMatrix();
+		}
+	}
+
+	function updateGradientTiles() {
+		const offsetX = Math.floor(GameState.player.position.x / GameState.tileSize);
+		const offsetY = Math.floor(GameState.player.position.y / GameState.tileSize);
+		let index = 0;
+		for (let x = -GameState.tilesPerRow; x <= GameState.tilesPerRow; x++) {
+			for (let y = -GameState.tilesPerRow; y <= GameState.tilesPerRow; y++) {
+				const tile = GameState.gradientTiles[index++];
+				tile.position.x = (x + offsetX) * GameState.tileSize;
+				tile.position.y = (y + offsetY) * GameState.tileSize;
+			}
+		}
+	}
+
+	function updateHealthUI() {
+		if (!GameState) return;
+
+		const health = Math.max(0, Math.min(GameState.health, 100));
+		const dash = Math.max(0, Math.min(GameState.dash, 100));
+
+		// Update health text and bar width
+		const healthBar = document.getElementById('Health');
+		document.getElementById('HealthText').innerText = Math.trunc(health);
+		healthBar.style.width = `${health}%`;
+
+		if (health > 50) {
+			healthBar.style.background = 'linear-gradient(90deg, #00FF00, #33cc33)'; // Green gradient
+		} else if (health > 20) {
+			healthBar.style.background = 'linear-gradient(90deg, #FFFF00, #FFCC00)'; // Yellow gradient
+		} else {
+			healthBar.style.background = 'linear-gradient(90deg, #FF0000, #CC0000)'; // Red gradient
+		}
 
 
-// === Utilities ===
-function getDeviceTypeByUserAgent() {
-    const userAgent = navigator.userAgent;
-    if (/iPad|Tablet/i.test(userAgent)) {
-        return 'Tablet';
-    } else if (/Mobi|Android|iPhone|iPod|BlackBerry|Windows Phone/i.test(userAgent)) {
-        return 'Mobile';
-    }
-    return 'Desktop';
-}
+		// Update dash bar
+		document.getElementById('Dashpower').style.width = `${dash}%`;
+	}
 
-function updateJoystickDimensions() {
-    GameState.joystickRect = DOMElements.Joystick.getBoundingClientRect();
-    GameState.stickRect = DOMElements.Stick.getBoundingClientRect();
-    GameState.joystickCenter = {
-        x: GameState.joystickRect.left + GameState.joystickRect.width / 2,
-        y: GameState.joystickRect.top + GameState.joystickRect.height / 2
-    };
-    GameState.maxRadius = GameState.joystickRect.width * 0.4;
-}
+	// === Utilities ===
+	function getDeviceTypeByUserAgent() {
+		const userAgent = navigator.userAgent;
+		if (/iPad|Tablet/i.test(userAgent)) {
+			return 'Tablet';
+		} else if (/Mobi|Android|iPhone|iPod|BlackBerry|Windows Phone/i.test(userAgent)) {
+			return 'Mobile';
+		}
+		return 'Desktop';
+	}
 
-function updateStickPosition(clientX, clientY) {
-    if (!GameState.player || GameState.isDead || !GameState.gameStarted) return;
+	function updateJoystickDimensions() {
+		GameState.joystickRect = DOMElements.Joystick.getBoundingClientRect();
+		GameState.stickRect = DOMElements.Stick.getBoundingClientRect();
+		GameState.joystickCenter = {
+			x: GameState.joystickRect.left + GameState.joystickRect.width / 2,
+			y: GameState.joystickRect.top + GameState.joystickRect.height / 2
+		};
+		GameState.maxRadius = GameState.joystickRect.width * 0.4;
+	}
 
-    let offsetX = clientX - GameState.joystickCenter.x;
-    let offsetY = clientY - GameState.joystickCenter.y;
+	function updateStickPosition(clientX, clientY) {
+		if (!GameState.player || GameState.isDead || !GameState.gameStarted) return;
 
-    const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-    if (distance > GameState.maxRadius) {
-        const scale = GameState.maxRadius / distance;
-        offsetX *= scale;
-        offsetY *= scale;
-    }
+		let offsetX = clientX - GameState.joystickCenter.x;
+		let offsetY = clientY - GameState.joystickCenter.y;
 
-    DOMElements.Stick.style.left = `calc(50% + ${offsetX}px - ${GameState.stickRect.width / 2}px)`;
-    DOMElements.Stick.style.top = `calc(50% + ${offsetY}px - ${GameState.stickRect.height / 2}px)`;
+		const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+		if (distance > GameState.maxRadius) {
+			const scale = GameState.maxRadius / distance;
+			offsetX *= scale;
+			offsetY *= scale;
+		}
 
-    // Calculate joystick input for movement
-    const inputMagnitude = Math.min(distance / GameState.maxRadius, 1); // Normalize magnitude (0 to 1)
-    if (inputMagnitude > 0.2) { // Dead zone to prevent jitter
-        const angle = Math.atan2(-offsetY, offsetX);
-        GameState.joystickInput.set(Math.cos(angle), Math.sin(angle), 0).multiplyScalar(inputMagnitude);
-        GameState.player.rotation.z = angle - Math.PI / 2;
+		DOMElements.Stick.style.left = `calc(50% + ${offsetX}px - ${GameState.stickRect.width / 2}px)`;
+		DOMElements.Stick.style.top = `calc(50% + ${offsetY}px - ${GameState.stickRect.height / 2}px)`;
 
-        if (GameState.lastSentRotation === null || Math.abs(angle - Math.PI / 2 - GameState.lastSentRotation) > 0.01) {
-            GameState.lastSentRotation = angle - Math.PI / 2;
-            socket.emit('updateRotation', {
-                name: GameState.Playername,
-                rotation: GameState.player.rotation.z
-            });
-        }
-        GameState.ismoving = true;
-        zoomcamera();
-    } else {
-        GameState.joystickInput.set(0, 0, 0);
-        GameState.ismoving = isPlayerMoving();
-        zoomcamera();
-    }
-}
-// Modify updateMovementState to ensure consistent state
-function updateMovementState() {
-    if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) {
-        GameState.joystickInput.set(0, 0, 0);
-        GameState.currentKeys = { w: false, a: false, s: false, d: false };
-        GameState.activeTouches.clear();
-        GameState.ismoving = false;
-        GameState.playerVelocity.set(0, 0, 0);
-        zoomcamera();
-        return;
-    }
-    GameState.ismoving = (GameState.currentKeys.w || GameState.currentKeys.a || 
-                         GameState.currentKeys.s || GameState.currentKeys.d || 
-                         GameState.joystickInput.length() > 0);
-    if (!GameState.ismoving) {
-        GameState.playerVelocity.set(0, 0, 0);
-    }
-    zoomcamera();
-}
+		// Calculate joystick input for movement
+		const inputMagnitude = Math.min(distance / GameState.maxRadius, 1); // Normalize magnitude (0 to 1)
+		if (inputMagnitude > 0.2) { // Dead zone to prevent jitter
+			const angle = Math.atan2(-offsetY, offsetX);
+			GameState.joystickInput.set(Math.cos(angle), Math.sin(angle), 0).multiplyScalar(inputMagnitude);
+			GameState.player.rotation.z = angle - Math.PI / 2;
 
-// Modify resetStick to align with stopMovement
-function resetStick() {
-    DOMElements.Stick.style.left = '40%';
-    DOMElements.Stick.style.top = '40%';
-    GameState.isDragging = false;
-    GameState.joystickInput.set(0, 0, 0);
-    GameState.ismoving = (GameState.currentKeys.w || GameState.currentKeys.a || 
-                         GameState.currentKeys.s || GameState.currentKeys.d);
-    if (!GameState.ismoving) {
-        GameState.playerVelocity.set(0, 0, 0);
-    }
-    zoomcamera();
-}
+			if (GameState.lastSentRotation === null || Math.abs(angle - Math.PI / 2 - GameState.lastSentRotation) > 0.01) {
+				GameState.lastSentRotation = angle - Math.PI / 2;
+				socket.emit('updateRotation', {
+					name: GameState.Playername,
+					rotation: GameState.player.rotation.z
+				});
+			}
+			GameState.ismoving = true;
+			zoomcamera();
+		} else {
+			GameState.joystickInput.set(0, 0, 0);
+			GameState.ismoving = isPlayerMoving();
+			zoomcamera();
+		}
+	}
+	// Modify updateMovementState to ensure consistent state
+	function updateMovementState() {
+		if (GameState.isDead || GameState.isTyping || !GameState.gameStarted) {
+			GameState.joystickInput.set(0, 0, 0);
+			GameState.currentKeys = { w: false, a: false, s: false, d: false };
+			GameState.activeTouches.clear();
+			GameState.ismoving = false;
+			GameState.playerVelocity.set(0, 0, 0);
+			zoomcamera();
+			return;
+		}
+		GameState.ismoving = (GameState.currentKeys.w || GameState.currentKeys.a || 
+							 GameState.currentKeys.s || GameState.currentKeys.d || 
+							 GameState.joystickInput.length() > 0);
+		if (!GameState.ismoving) {
+			GameState.playerVelocity.set(0, 0, 0);
+		}
+		zoomcamera();
+	}
 
-function initializeJoystick() {
-    updateJoystickDimensions();
-    window.addEventListener('resize', updateJoystickDimensions);
-}
+	// Modify resetStick to align with stopMovement
+	function resetStick() {
+		DOMElements.Stick.style.left = '40%';
+		DOMElements.Stick.style.top = '40%';
+		GameState.isDragging = false;
+		GameState.joystickInput.set(0, 0, 0);
+		GameState.ismoving = (GameState.currentKeys.w || GameState.currentKeys.a || 
+							 GameState.currentKeys.s || GameState.currentKeys.d);
+		if (!GameState.ismoving) {
+			GameState.playerVelocity.set(0, 0, 0);
+		}
+		zoomcamera();
+	}
 
-function handleSendMessage() {
-    const messageContent = DOMElements.ChatTextBox.value.trim();
-    
-    if (messageContent === '') {
-        alert('Please send a proper message.');
-        return;
-    }
+	function initializeJoystick() {
+		updateJoystickDimensions();
+		window.addEventListener('resize', updateJoystickDimensions);
+	}
 
-    const message = `${GameState.Playername}: ${messageContent}`;
-    DOMElements.ChatTextBox.value = '';
-    socket.emit('message', message);
-	
-}
+	function handleSendMessage() {
+		const messageContent = DOMElements.ChatTextBox.value.trim();
+		
+		if (messageContent === '') {
+			alert('Please send a proper message.');
+			return;
+		}
 
-
-function createBulletMesh() {
-    const scale = Math.min(window.innerWidth / Constants.baseWidth, window.innerHeight / Constants.baseHeight);
-    const geometry = new THREE.BoxGeometry(1 * scale, 0.2 * scale, 0.02);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const mesh = new THREE.Mesh(geometry, material);
-    return mesh;
-}
-
-function generateBulletID() {
-    return `${GameState.Playername}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-}
-
-function createGradientTexture() {
-    const size = 512;
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = size;
-    const ctx = canvas.getContext('2d');
-    const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-    gradient.addColorStop(0, 'rgba(0, 241, 255, 0.4)');
-    gradient.addColorStop(1, 'black');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, size, size);
-    return new THREE.CanvasTexture(canvas);
-}
-
-function createGradientTiles() {
-    const texture = createGradientTexture();
-    for (let x = -GameState.tilesPerRow; x <= GameState.tilesPerRow; x++) {
-        for (let y = -GameState.tilesPerRow; y <= GameState.tilesPerRow; y++) {
-            const geometry = new THREE.PlaneGeometry(GameState.tileSize, GameState.tileSize);
-            const material = new THREE.MeshBasicMaterial({ map: texture, depthWrite: false });
-            const tile = new THREE.Mesh(geometry, material);
-            tile.position.set(x * GameState.tileSize, y * GameState.tileSize, -2);
-            GameState.scene.add(tile);
-            GameState.gradientTiles.push(tile);
-        }
-    }
-}
-// === Utilities ===
-function createNameLabel(text) {
-    console.log(`Creating name label for: ${text}`);
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = 300;
-    canvas.height = 100;
-
-    context.font = 'Bold 32px Arial';
-    context.fillStyle = 'white';
-    context.textAlign = 'center';
-    context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-    const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-    const sprite = new THREE.Sprite(material);
-
-    sprite.scale.set(3, 1.5, 1);
-    return sprite;
-}
-
-function createNewEnemy(name, whatteam) {
-    const geometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    let material;
-    if (whatteam === 'red') {
-        material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide });
-    } else if (whatteam === 'blue') {
-        material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide });
-    } else {
-        console.warn(`Invalid team for ${name}: ${whatteam}, using default material`);
-        material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-    }
-    const enemymesh = new THREE.Mesh(geometry, material);
-    enemymesh.name = name;
-
-    const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-    const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-    enemymesh.scale.set(sX, sY, 1);
-
-    try {
-        const nameLabel = createNameLabel(name);
-        nameLabel.position.set(0, -0.2, 0);
-        enemymesh.add(nameLabel);
-    } catch (error) {
-        console.error(`Failed to create name label for ${name}:`, error);
-    }
-
-    return enemymesh;
-}
-
-function createDashClone(color = GameState.player?.material?.color?.getHex() || 0xffffff) {
-    const geometry = new THREE.CircleGeometry(0.3, 16);
-    const material = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.5,
-        depthWrite: false
-    });
-    return new THREE.Mesh(geometry, material);
-}
-
-function spawnDashClones() {
-    const backOffset = 0.6;
-    const spread = 0.5;
-
-    const forward = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), GameState.player.rotation.z);
-    const back = forward.clone().negate();
-    const right = new THREE.Vector3(-forward.y, forward.x, 0);
-
-    const backOrigin = GameState.player.position.clone().add(back.clone().multiplyScalar(backOffset));
-
-    const clonePositions = [
-        backOrigin.clone().add(right.clone().multiplyScalar(-2 * spread)),
-        backOrigin.clone().add(right.clone().multiplyScalar(-spread)),
-        backOrigin.clone(),
-        backOrigin.clone().add(right.clone().multiplyScalar(spread)),
-        backOrigin.clone().add(right.clone().multiplyScalar(2 * spread))
-    ];
-
-    for (const pos of clonePositions) {
-        const clone = createDashClone();
-        clone.position.copy(pos);
-        clone.userData = {
-            direction: forward.clone().negate(),
-            distance: 0
-        };
-        GameState.dashClones.push(clone);
-        GameState.scene.add(clone);
-    }
-}
-
-function updateDashClones() {
-    const toKeep = [];
-
-    for (const clone of GameState.dashClones) {
-        const move = clone.userData.direction.clone().multiplyScalar(0.5);
-        clone.position.add(move);
-        clone.userData.distance += move.length();
-
-        if (clone.userData.distance < GameState.dashDistance) {
-            toKeep.push(clone);
-        } else {
-            GameState.scene.remove(clone);
-        }
-    }
-    GameState.dashClones = toKeep;
-}
-
-function updateKillPercentages() {
-    let totalKills = GameState.redkills + GameState.bluekills;
-    let redPercentage = totalKills > 0 ? ((GameState.redkills / totalKills) * 100).toFixed(2) : 0;
-    let bluePercentage = totalKills > 0 ? ((GameState.bluekills / totalKills) * 100).toFixed(2) : 0;
-
-    console.log(redPercentage, bluePercentage);
-    document.getElementById('RedKills').style.width = Math.trunc(redPercentage) + '%';
-    document.getElementById('BlueKills').style.width = Math.trunc(bluePercentage) + '%';
-}
-
-function scalePlayer() {
-    const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
-    const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
-    if (GameState.player) {
-        GameState.player.scale.set(sX, sY, 1);
-    }
-    // Scale all enemies
-    Object.values(GameState.enemies).forEach(enemy => {
-        enemy.scale.set(sX, sY, 1);
-    });
-}
-function isPlayerMoving() {
-    return GameState.currentKeys.w || GameState.currentKeys.a || GameState.currentKeys.s || GameState.currentKeys.d;
-}
-
-function onKeyDown(event) {
-    if (GameState.isDead || GameState.isTyping) return;
-    const key = event.key.toLowerCase();
-    if (['w', 'a', 's', 'd'].includes(key)) {
-        GameState.currentKeys[key] = true;
-    }
-
-    if (['w', 'a', 's', 'd', ' '].includes(key)) {
-        GameState.ismoving = true;
-        zoomcamera();
-    }
-    if (key === ' ' && !GameState.isDashing && GameState.dashpower >= 20 && Date.now() - GameState.lastDashTime > GameState.dashCooldown) {
-        dash();
-    }
-}
-
-function onKeyUp(event) {
-    if (GameState.isDead || GameState.isTyping) return;
-    const key = event.key.toLowerCase();
-    if (['w', 'a', 's', 'd'].includes(key)) {
-        GameState.currentKeys[key] = false;
-    }
-
-    if (!isPlayerMoving() && key !== ' ') {
-        GameState.ismoving = false;
-        zoomcamera();
-    }
-}
-
-function zoomcamera() {
-    GameState.targetZoom = GameState.ismoving ? 0.9 : 1.0;
-}
-
-function setupButton(button, key) {
-    button.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        if (GameState.isDead || GameState.isTyping) return;
-        GameState.currentKeys[key] = true;
-        updateMovementState();
-    });
-
-    button.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (GameState.isDead || GameState.isTyping) return;
-        for (let touch of e.changedTouches) {
-            GameState.activeTouches.set(touch.identifier, key);
-            GameState.currentKeys[key] = true;
-        }
-        updateMovementState();
-    });
-
-    button.addEventListener('mouseup', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        GameState.currentKeys[key] = false;
-        updateMovementState();
-    });
-
-    button.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        for (let touch of e.changedTouches) {
-            if (GameState.activeTouches.has(touch.identifier)) {
-                GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
-                GameState.activeTouches.delete(touch.identifier);
-            }
-        }
-        updateMovementState();
-    });
-
-    button.addEventListener('touchcancel', (e) => {
-        e.preventDefault();
-        for (let touch of e.changedTouches) {
-            if (GameState.activeTouches.has(touch.identifier)) {
-                GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
-                GameState.activeTouches.delete(touch.identifier);
-            }
-        }
-        updateMovementState();
-    });
-
-    button.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
-}
-
-function updateMovementState() {
-    if (GameState.isDead || GameState.isTyping) return;
-    GameState.ismoving = GameState.currentKeys.w || GameState.currentKeys.a || GameState.currentKeys.s || GameState.currentKeys.d;
-    if (GameState.ismoving) zoomcamera();
-}
-
-function emitKeys(state) {
-    const now = Date.now();
-    if (now - GameState.lastEmit > GameState.emitDelay) {
-        GameState.lastEmit = now;
-        socket.emit('updatePosition', state, { currentKeys: GameState.currentKeys });
-    }
-}
-
-const Disconnectedoverlay = document.getElementById("DisconnectedOverlay");
-const reconnectBtn = document.getElementById("ReconnectButton");
-const errorMsg = document.getElementById("ErrorMessage");
-const errorCodeSpan = document.getElementById("ErrorCode");
-
-reconnectBtn.addEventListener("click", () => {
-  socket.connect(); // Attempt reconnection
-
-  // Listen for connection success/failure
-  socket.once("connect", () => {
-    Disconnectedoverlay.style.visibility = "hidden";
-    errorMsg.style.visibility = "hidden";
-  });
-
-  socket.once("connect_error", (err) => {
-    errorCodeSpan.textContent = err.code || "Unknown";
-    Disconnectedoverlay.style.visibility = "visible";
-    errorMsg.style.visibility = "visible";
-  });
-});
+		const message = `${GameState.Playername}: ${messageContent}`;
+		DOMElements.ChatTextBox.value = '';
+		socket.emit('message', message);
+		
+	}
 
 
+	function createBulletMesh() {
+		const scale = Math.min(window.innerWidth / Constants.baseWidth, window.innerHeight / Constants.baseHeight);
+		const geometry = new THREE.BoxGeometry(1 * scale, 0.2 * scale, 0.02);
+		const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+		const mesh = new THREE.Mesh(geometry, material);
+		return mesh;
+	}
 
-// === Run Initialization ===
-initializeGame();
+	function generateBulletID() {
+		return `${GameState.Playername}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+	}
+
+	function createGradientTexture() {
+		const size = 512;
+		const canvas = document.createElement('canvas');
+		canvas.width = canvas.height = size;
+		const ctx = canvas.getContext('2d');
+		const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+		gradient.addColorStop(0, 'rgba(0, 241, 255, 0.4)');
+		gradient.addColorStop(1, 'black');
+		ctx.fillStyle = gradient;
+		ctx.fillRect(0, 0, size, size);
+		return new THREE.CanvasTexture(canvas);
+	}
+
+	function createGradientTiles() {
+		const texture = createGradientTexture();
+		for (let x = -GameState.tilesPerRow; x <= GameState.tilesPerRow; x++) {
+			for (let y = -GameState.tilesPerRow; y <= GameState.tilesPerRow; y++) {
+				const geometry = new THREE.PlaneGeometry(GameState.tileSize, GameState.tileSize);
+				const material = new THREE.MeshBasicMaterial({ map: texture, depthWrite: false });
+				const tile = new THREE.Mesh(geometry, material);
+				tile.position.set(x * GameState.tileSize, y * GameState.tileSize, -2);
+				GameState.scene.add(tile);
+				GameState.gradientTiles.push(tile);
+			}
+		}
+	}
+	// === Utilities ===
+	function createNameLabel(text) {
+		console.log(`Creating name label for: ${text}`);
+		const canvas = document.createElement('canvas');
+		const context = canvas.getContext('2d');
+		canvas.width = 300;
+		canvas.height = 100;
+
+		context.font = 'Bold 32px Arial';
+		context.fillStyle = 'white';
+		context.textAlign = 'center';
+		context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+		const texture = new THREE.CanvasTexture(canvas);
+		const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+		const sprite = new THREE.Sprite(material);
+
+		sprite.scale.set(3, 1.5, 1);
+		return sprite;
+	}
+
+	function createNewEnemy(name, whatteam) {
+		const geometry = new THREE.BufferGeometry();
+		const vertices = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]);
+		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+		let material;
+		if (whatteam === 'red') {
+			material = new THREE.MeshBasicMaterial({ color: 0xeb3434, side: THREE.DoubleSide });
+		} else if (whatteam === 'blue') {
+			material = new THREE.MeshBasicMaterial({ color: 0x12a4e3, side: THREE.DoubleSide });
+		} else {
+			console.warn(`Invalid team for ${name}: ${whatteam}, using default material`);
+			material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+		}
+		const enemymesh = new THREE.Mesh(geometry, material);
+		enemymesh.name = name;
+
+		const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+		const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+		enemymesh.scale.set(sX, sY, 1);
+
+		try {
+			const nameLabel = createNameLabel(name);
+			nameLabel.position.set(0, -0.2, 0);
+			enemymesh.add(nameLabel);
+		} catch (error) {
+			console.error(`Failed to create name label for ${name}:`, error);
+		}
+
+		return enemymesh;
+	}
+
+	function createDashClone(color = GameState.player?.material?.color?.getHex() || 0xffffff) {
+		const geometry = new THREE.CircleGeometry(0.3, 16);
+		const material = new THREE.MeshBasicMaterial({
+			color: color,
+			transparent: true,
+			opacity: 0.5,
+			depthWrite: false
+		});
+		return new THREE.Mesh(geometry, material);
+	}
+
+	function spawnDashClones() {
+		const backOffset = 0.6;
+		const spread = 0.5;
+
+		const forward = new THREE.Vector3(0, 1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), GameState.player.rotation.z);
+		const back = forward.clone().negate();
+		const right = new THREE.Vector3(-forward.y, forward.x, 0);
+
+		const backOrigin = GameState.player.position.clone().add(back.clone().multiplyScalar(backOffset));
+
+		const clonePositions = [
+			backOrigin.clone().add(right.clone().multiplyScalar(-2 * spread)),
+			backOrigin.clone().add(right.clone().multiplyScalar(-spread)),
+			backOrigin.clone(),
+			backOrigin.clone().add(right.clone().multiplyScalar(spread)),
+			backOrigin.clone().add(right.clone().multiplyScalar(2 * spread))
+		];
+
+		for (const pos of clonePositions) {
+			const clone = createDashClone();
+			clone.position.copy(pos);
+			clone.userData = {
+				direction: forward.clone().negate(),
+				distance: 0
+			};
+			GameState.dashClones.push(clone);
+			GameState.scene.add(clone);
+		}
+	}
+
+	function updateDashClones() {
+		const toKeep = [];
+
+		for (const clone of GameState.dashClones) {
+			const move = clone.userData.direction.clone().multiplyScalar(0.5);
+			clone.position.add(move);
+			clone.userData.distance += move.length();
+
+			if (clone.userData.distance < GameState.dashDistance) {
+				toKeep.push(clone);
+			} else {
+				GameState.scene.remove(clone);
+			}
+		}
+		GameState.dashClones = toKeep;
+	}
+
+	function updateKillPercentages() {
+		let totalKills = GameState.redkills + GameState.bluekills;
+		let redPercentage = totalKills > 0 ? ((GameState.redkills / totalKills) * 100).toFixed(2) : 0;
+		let bluePercentage = totalKills > 0 ? ((GameState.bluekills / totalKills) * 100).toFixed(2) : 0;
+
+		console.log(redPercentage, bluePercentage);
+		document.getElementById('RedKills').style.width = Math.trunc(redPercentage) + '%';
+		document.getElementById('BlueKills').style.width = Math.trunc(bluePercentage) + '%';
+	}
+
+	function scalePlayer() {
+		const sX = Math.max(0.1, window.innerWidth / Constants.baseWidth);
+		const sY = Math.max(0.1, window.innerHeight / Constants.baseHeight);
+		if (GameState.player) {
+			GameState.player.scale.set(sX, sY, 1);
+		}
+		// Scale all enemies
+		Object.values(GameState.enemies).forEach(enemy => {
+			enemy.scale.set(sX, sY, 1);
+		});
+	}
+	function isPlayerMoving() {
+		return GameState.currentKeys.w || GameState.currentKeys.a || GameState.currentKeys.s || GameState.currentKeys.d;
+	}
+
+	function onKeyDown(event) {
+		if (GameState.isDead || GameState.isTyping) return;
+		const key = event.key.toLowerCase();
+		if (['w', 'a', 's', 'd'].includes(key)) {
+			GameState.currentKeys[key] = true;
+		}
+
+		if (['w', 'a', 's', 'd', ' '].includes(key)) {
+			GameState.ismoving = true;
+			zoomcamera();
+		}
+		if (key === ' ' && !GameState.isDashing && GameState.dashpower >= 20 && Date.now() - GameState.lastDashTime > GameState.dashCooldown) {
+			dash();
+		}
+	}
+
+	function onKeyUp(event) {
+		if (GameState.isDead || GameState.isTyping) return;
+		const key = event.key.toLowerCase();
+		if (['w', 'a', 's', 'd'].includes(key)) {
+			GameState.currentKeys[key] = false;
+		}
+
+		if (!isPlayerMoving() && key !== ' ') {
+			GameState.ismoving = false;
+			zoomcamera();
+		}
+	}
+
+	function zoomcamera() {
+		GameState.targetZoom = GameState.ismoving ? 0.9 : 1.0;
+	}
+
+	function setupButton(button, key) {
+		button.addEventListener('mousedown', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			if (GameState.isDead || GameState.isTyping) return;
+			GameState.currentKeys[key] = true;
+			updateMovementState();
+		});
+
+		button.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			if (GameState.isDead || GameState.isTyping) return;
+			for (let touch of e.changedTouches) {
+				GameState.activeTouches.set(touch.identifier, key);
+				GameState.currentKeys[key] = true;
+			}
+			updateMovementState();
+		});
+
+		button.addEventListener('mouseup', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			GameState.currentKeys[key] = false;
+			updateMovementState();
+		});
+
+		button.addEventListener('touchend', (e) => {
+			e.preventDefault();
+			for (let touch of e.changedTouches) {
+				if (GameState.activeTouches.has(touch.identifier)) {
+					GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
+					GameState.activeTouches.delete(touch.identifier);
+				}
+			}
+			updateMovementState();
+		});
+
+		button.addEventListener('touchcancel', (e) => {
+			e.preventDefault();
+			for (let touch of e.changedTouches) {
+				if (GameState.activeTouches.has(touch.identifier)) {
+					GameState.currentKeys[GameState.activeTouches.get(touch.identifier)] = false;
+					GameState.activeTouches.delete(touch.identifier);
+				}
+			}
+			updateMovementState();
+		});
+
+		button.addEventListener('contextmenu', (e) => {
+			e.preventDefault();
+		});
+	}
+
+	function updateMovementState() {
+		if (GameState.isDead || GameState.isTyping) return;
+		GameState.ismoving = GameState.currentKeys.w || GameState.currentKeys.a || GameState.currentKeys.s || GameState.currentKeys.d;
+		if (GameState.ismoving) zoomcamera();
+	}
+
+	function emitKeys(state) {
+		const now = Date.now();
+		if (now - GameState.lastEmit > GameState.emitDelay) {
+			GameState.lastEmit = now;
+			socket.emit('updatePosition', state, { currentKeys: GameState.currentKeys });
+		}
+	}
+
+	const Disconnectedoverlay = document.getElementById("DisconnectedOverlay");
+	const reconnectBtn = document.getElementById("ReconnectButton");
+	const errorMsg = document.getElementById("ErrorMessage");
+	const errorCodeSpan = document.getElementById("ErrorCode");
+
+	reconnectBtn.addEventListener("click", () => {
+	  socket.connect(); // Attempt reconnection
+
+	  // Listen for connection success/failure
+	  socket.once("connect", () => {
+		Disconnectedoverlay.style.visibility = "hidden";
+		errorMsg.style.visibility = "hidden";
+	  });
+
+	  socket.once("connect_error", (err) => {
+		errorCodeSpan.textContent = err.code || "Unknown";
+		Disconnectedoverlay.style.visibility = "visible";
+		errorMsg.style.visibility = "visible";
+	  });
+	});
+
+
+
+	// === Run Initialization ===
+	initializeGame();
 </script>
 
 </body>

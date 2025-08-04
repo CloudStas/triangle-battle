@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Triangle Battle</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 6vw;
+            margin-bottom: 3vh;
+            color: #00ffff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        .signup-form {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            width: 80vw;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #00ffff;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 0.8rem 10px;
+            border: 1px solid #00ffff;
+            border-radius: 0.3rem;
+            background-color: #1e1e2f;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            border-color: #00ccff;
+            box-shadow: 0 0 8px rgba(0, 204, 255, 0.6);
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #00ffff;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .action-button::after {
+            content: '';
+        }
+
+        .action-button:hover {
+            background-color: #00ccff;
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.8);
+        }
+
+        .login-link {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .login-link a {
+            color: #00ffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #00ccff;
+            text-decoration: underline;
+        }
+
+        #errorMessage {
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Join the Battle</h1>
+
+    <form class="signup-form" id="signupForm">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+
+        <button type="submit" class="action-button">Sign Up</button>
+
+        <p class="login-link">Already have an account? <a href="/login">Log in here</a></p>
+    </form>
+
+    <div id="errorMessage"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const signupForm = document.getElementById('signupForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        function showErrorMessage(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        signupForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showErrorMessage("Passwords do not match!");
+                return;
+            }
+
+            if (password.length < 6) {
+                showErrorMessage("Password must be at least 6 characters long.");
+                return;
+            }
+
+            socket.emit('signupAttempt', { username, password });
+        });
+
+        socket.on('signupResponse', (data) => {
+            if (data.success) {
+                alert('Sign up successful! You can now log in.');
+                window.location.href = '/login';
+            } else {
+                showErrorMessage(data.message);
+            }
+        });
+    </script>
+</body>
+</html>
