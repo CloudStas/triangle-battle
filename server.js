@@ -18,7 +18,7 @@ const saltRounds = 10;
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/game.html');
+    res.sendFile(__dirname + '/index.html');
 });
 /*
 app.get('/signup', (req, res) => {
