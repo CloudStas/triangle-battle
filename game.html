@@ -15,7 +15,6 @@
 
 
   <style>
-<<<<<<< HEAD
 	body {
 		overflow: hidden;
 		margin: 0;
@@ -29,6 +28,16 @@
 		-webkit-user-drag: none;
 		-khtml-user-drag: none;
 		touch-action: manipulation;
+	}
+
+	canvas {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: 2px solid #333;
+		z-index: 10;
 	}
 
 	#StartScreen {
@@ -201,17 +210,7 @@
 		height: 100%;
 		fill: #000;
 	}
-
-	canvas {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		border: 2px solid #333;
-		z-index: 10;
-	}
-
+	  
 	#PosText, #Healthbox, #Healthbar, #Health, #HealthText, #plustext {
 		position: absolute;
 		transform-origin: top left;
@@ -332,10 +331,8 @@
 		visibility: visible;
 		position: absolute;
 		z-index: 22;
-
 	}
-
-	/* === Leaderboard === */
+	  
 	#Leaderboard {
 		position: absolute;
 		top: 2%;
@@ -402,8 +399,7 @@
 		text-align: left;
 		font-size: clamp(12px, 1.5vw, 14px);
 	}
-
-	/* === Chat Interface === */
+	  
 	#Chat {
 		visibility: visible;
 		position: absolute;
@@ -556,7 +552,6 @@
 		padding: 5px;
 	}
 
-	/* === Team Kills Bar === */
 	#RedVsBlueBarKills {
 		visibility: visible;
 		position: absolute;
@@ -692,8 +687,8 @@
 		visibility: visible;
 		z-index: 33;
 		position: absolute;
-		width: 20%; /* Ensure this is relative to a properly sized parent */
-		min-width: 100px; /* Add a minimum width to prevent collapse */
+		width: 20%;
+		min-width: 100px; 
 		height: 30%;
 		top: 55%;
 		right: 75%;
@@ -711,9 +706,9 @@
 		top: 75%;
 		left: 83%;
 		background: linear-gradient(45deg, #00cc00, #00ff00);
-		border-radius: 50%; /* Use 50% for a perfect circle */
-		font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
-		display: flex; /* Center content */
+		border-radius: 50%;
+		font-size: clamp(16px, 2vw, 24px); 
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -734,9 +729,9 @@
 		top: 55%;
 		left: 90%;
 		background: linear-gradient(45deg, #cc0000, #ff0000);
-		border-radius: 50%; /* Use 50% for a perfect circle */
-		font-size: clamp(16px, 2vw, 24px); /* Reduce max font-size for better scaling */
-		display: flex; /* Center content */
+		border-radius: 50%;
+		font-size: clamp(16px, 2vw, 24px);
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -772,8 +767,7 @@
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 		transition: transform 0.1s ease;
 	}
-
-	/* === Fullscreen Overlay === */
+	  
 	#fullscreenOverlay {
 		position: fixed;
 		top: 0;
@@ -827,7 +821,6 @@
 		color: #ffffff;
 	}
 
-	/* === Respawn Overlay and Loader === */
 	#respawnOverlay, #LoadingOverlay {
 		position: fixed;
 		top: 0;
@@ -972,114 +965,101 @@
 	  margin-top: 15px;
 	  font-weight: bold;
 	}
-=======
-	/* === General Styles === */
-body {
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #1a1a1a; /* Dark background for game aesthetic */
-    user-select: none; /* Standard property */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Edge */
-    -webkit-user-drag: none; /* Prevent dragging in WebKit browsers */
-    -khtml-user-drag: none; /* Older WebKit browsers */
-    touch-action: manipulation; /* Improve touch behavior on mobile */
-}
+	  
+	body {
+	    overflow: hidden;
+	    margin: 0;
+	    padding: 0;
+	    font-family: 'Roboto', sans-serif;
+	    background-color: #1a1a1a;
+	    user-select: none;
+	    -webkit-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    -webkit-user-drag: none;
+	    -khtml-user-drag: none;
+	    touch-action: manipulation;
+	}
 
-/* === Start Screen === */
-#StartScreen {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+	#StartScreen {
+	    position: fixed;
+	    width: 100%;
+	    height: 100%;
+	    background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+	    z-index: 100;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	}
 
-#StartScreenLayout {
-    width: 80%;
-    max-width: 600px;
-    height: 80%;
-    background: rgba(0, 255, 255, 0.2); /* Subtle cyan with transparency */
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    backdrop-filter: blur(5px); /* Glassmorphism effect */
-}
+	#StartScreenLayout {
+	    width: 80%;
+	    max-width: 600px;
+	    height: 80%;
+	    background: rgba(0, 255, 255, 0.2);
+	    border-radius: 15px;
+	    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    justify-content: center;
+	    position: relative;
+	    backdrop-filter: blur(5px);
+	}
 
-#ErrorMessage {
-    color: #ff4d4d;
-    visibility: hidden;
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(12px, 2vw, 16px);
-    font-weight: 700;
-}
+	#ErrorMessage {
+	    color: #ff4d4d;
+	    visibility: hidden;
+	    position: absolute;
+	    bottom: 10%;
+	    left: 50%;
+	    transform: translateX(-50%);
+	    font-size: clamp(12px, 2vw, 16px);
+	    font-weight: 700;
+	}
 
-#DisplayNameText {
-    font-size: clamp(18px, 3vw, 24px);
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
+	#DisplayNameText {
+	    font-size: clamp(18px, 3vw, 24px);
+	    color: #ffffff;
+	    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	}
 
-#DisplayNameInput {
-    margin-top: 20px;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #00ffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    width: 70%;
-    max-width: 400px;
-    color: #ffffff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+	#DisplayNameInput {
+	    margin-top: 20px;
+	    padding: 10px;
+	    font-size: 16px;
+	    border: 2px solid #00ffff;
+	    background-color: rgba(255, 255, 255, 0.1);
+	    border-radius: 8px;
+	    width: 70%;
+	    max-width: 400px;
+	    color: #ffffff;
+	    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
 
-#DisplayNameInput:focus {
-    border-color: #00ccff;
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    outline: none;
-}
+	#DisplayNameInput:focus {
+	    border-color: #00ccff;
+	    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+	    outline: none;
+	}
+	
+	#JoinButton {
+	    margin-top: 20px;
+	    background: linear-gradient(45deg, #00ff00, #33cc33);
+	    border: none;
+	    border-radius: 25px;
+	    padding: 12px 24px;
+	    font-size: clamp(14px, 2.5vw, 16px);
+	    font-weight: 700;
+	    color: #000;
+	    cursor: pointer;
+	    transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
 
-#JoinButton {
-    margin-top: 20px;
-    background: linear-gradient(45deg, #00ff00, #33cc33);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 24px;
-    font-size: clamp(14px, 2.5vw, 16px);
-    font-weight: 700;
-    color: #000;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#JoinButton:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
-}
-
-/* === Game Canvas === */
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid #333;
-    z-index: 10;
-}
+	#JoinButton:hover {
+	    transform: scale(1.05);
+	    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+	}
 
 /* === HUD Elements === */
 #PosText, #Healthbox, #Healthbar, #Health, #HealthText, #plustext {
